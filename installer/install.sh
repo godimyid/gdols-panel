@@ -187,11 +187,13 @@ install_php() {
     fi
 
     print_info "Adding PHP repository..."
-    add-apt-repository ppa:ondrej/php -y > /dev/null 2>&1
+    add-apt-repository ppa:ondrej/php -y
+
+    print_info "Updating package list..."
     apt-get update -qq
 
     print_info "Installing PHP 8.3 and extensions..."
-    apt-get install -y \
+    if ! apt-get install -y \
         php8.3 \
         php8.3-fpm \
         php8.3-mysql \
@@ -204,7 +206,22 @@ install_php() {
         php8.3-bcmath \
         php8.3-intl \
         php8.3-json \
-        > /dev/null 2>&1
+        php8.3-cli; then
+        print_error "Failed to install PHP 8.3"
+        print_info "Trying alternative installation method..."
+
+        # Try installing without specific version
+        if ! apt-get install -y php php-mysql php-redis php-curl php-gd php-mbstring php-xml php-zip php-bcmath php-intel; then
+            print_error "PHP installation failed completely"
+            print_info "Please install PHP manually:"
+            print_info "  sudo apt update"
+            print_info "  sudo apt install software-properties-common"
+            print_info "  sudo add-apt-repository ppa:ondrej/php -y"
+            print_info "  sudo apt update"
+            print_info "  sudo apt install php8.3 php8.3-mysql php8.3-redis php8.3-curl php8.3-gd php8.3-mbstring php8.3-xml php8.3-zip"
+            exit 1
+        fi
+    fi
 
     print_success "PHP 8.3 installed successfully"
 }
@@ -218,7 +235,18 @@ install_mariadb() {
     fi
 
     print_info "Installing MariaDB..."
-    apt-get install -y mariadb-server mariadb-client > /dev/null 2>&1
+    if ! apt-get install -y mariadb-server mariadb-client; then
+        print_error "Failed to install MariaDB"
+        print_info "Please install manually:"
+        print_info "  sudo apt install mariadb-server mariadb-client"
+        print_info "  sudo systemctl start mysql"
+        print_info "  sudo systemctl enable mysql"
+        exit 1
+    fi
+
+    print_info "Starting MariaDB service..."
+    systemctl start mysql || true
+    systemctl enable mysql || true
 
     print_info "Securing MariaDB installation..."
     # Set root password (you should change this)
@@ -236,11 +264,18 @@ install_redis() {
     fi
 
     print_info "Installing Redis..."
-    apt-get install -y redis-server > /dev/null 2>&1
+    if ! apt-get install -y redis-server; then
+        print_error "Failed to install Redis"
+        print_info "Please install manually:"
+        print_info "  sudo apt install redis-server"
+        print_info "  sudo systemctl start redis-server"
+        print_info "  sudo systemctl enable redis-server"
+        exit 1
+    fi
 
-    print_info "Enabling Redis service..."
-    systemctl enable redis-server > /dev/null 2>&1
-    systemctl start redis-server > /dev/null 2>&1
+    print_info "Starting Redis service..."
+    systemctl start redis-server || true
+    systemctl enable redis-server || true
 
     print_success "Redis installed successfully"
 }
