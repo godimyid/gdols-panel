@@ -1,0 +1,887 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Firewall - GD Panel</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <style>
+        .firewall-status {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--spacing-lg);
+            padding: var(--spacing-lg);
+            margin-bottom: var</head></title></style>(--spacing-xl);
+        }
+
+        .firewall-status-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .firewall-status-indicator {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+        }
+
+        .status-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        .status-dot.active {
+            background: var(--success-color);
+        }
+
+        .status-dot.inactive {
+            background: var(--danger-color);
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .firewall-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--spacing-lg);
+            margin-top: var(--spacing-lg);
+        }
+
+        .info-item {
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-xs);
+        }
+
+        .info-label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .info-value {
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+
+        .rule-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--spacing-lg);
+            padding: var(--spacing-lg);
+            margin-bottom: var(--spacing-lg);
+            transition: all var(--transition-normal);
+        }
+
+        .rule-card:hover {
+            border-color: var(--primary-color);
+            box-shadow: var(--shadow-md);
+        }
+
+        .rule-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: var(--spacing-md);
+        }
+
+        .rule-info {
+            flex: 1;
+        }
+
+        .rule-title {
+            font-weight: 600;
+            font-size: 1rem;
+            margin-bottom: var(--spacing-xs);
+        }
+
+        .rule-description {
+            font-size: 0.875rem;
+            color: var(--text-muted);
+        }
+
+        .rule-specs {
+            display: flex;
+            gap: var(--spacing-md);
+            flex-wrap: wrap;
+            padding: var(--spacing-sm) 0;
+        }
+
+        .rule-spec {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-xs);
+            font-size: 0.875rem;
+        }
+
+        .rule-spec-label {
+            color: var(--text-muted);
+        }
+
+        .rule-spec-value {
+            font-weight: 600;
+            font-family: var(--font-mono);
+        }
+
+        .rule-actions {
+            display: flex;
+            gap: var(--spacing-sm);
+        }
+
+        .preset-rules {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--spacing-md);
+            margin-bottom: var(--spacing-xl);
+        }
+
+        .preset-rule {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: var(--spacing-md);
+            padding: var(--spacing-md);
+            text-align: center;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+        }
+
+        .preset-rule:hover {
+            border-color: var(--primary-color);
+            background: var(--bg-hover);
+        }
+
+        .preset-rule-icon {
+            font-size: 2rem;
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .preset-rule-title {
+            font-weight: 600;
+            font-size: 0.875rem;
+            margin-bottom: var(--spacing-xs);
+        }
+
+        .preset-rule-ports {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .common-ports {
+            display: flex;
+            gap: var(--spacing-sm);
+            flex-wrap: wrap;
+            margin-top: var(--spacing-md);
+        }
+
+        .common-port {
+            padding: var(--spacing-xs) var(--spacing-sm);
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            border-radius: var(--spacing-sm);
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+        }
+
+        .common-port:hover {
+            background: var(--primary-color);
+            border-color: var(--primary-color);
+            color: white;
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 50px;
+            height: 26px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--bg-tertiary);
+            transition: var(--transition-fast);
+            border-radius: 26px;
+        }
+
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 20px;
+            width: 20px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: var(--transition-fast);
+            border-radius: 50%;
+        }
+
+        input:checked + .toggle-slider {
+            background-color: var(--success-color);
+        }
+
+        input:checked + .toggle-slider:before {
+            transform: translateX(24px);
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="header-left">
+                    <div class="header-logo">
+                        <span class="header-logo-icon">🚀</span>
+                        <div>
+                            <div>GD Panel</div>
+                            <div class="header-brand">by GoDiMyID</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="header-right">
+                    <div class="header-user">
+                        <div class="header-user</body></div></div>-info">
+                            <div class="header-user-name">Admin</div>
+                            <div class="header-user-role">Administrator</div>
+                        </div>
+                        <div class="header-user-avatar">A</div>
+                    </div>
+                    <div class="header-actions">
+                        <button class="btn btn-sm btn-outline" onclick="window.location.href='login.html'" data-action="logout">
+                            <span>🚪</span> Logout
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Navigation -->
+    <nav class="nav">
+        <div</span> class="container">
+            <div class="nav-content">
+                <a class="nav-item" data-page="dashboard" href="index.html">
+                    <span class="nav-item-icon">📊</span>
+                    <span class="nav-item-text">Dashboard</span>
+                </a>
+                <a class="nav-item" data-page="vhosts" href="vhosts.html">
+                    <span class="nav-item-icon">🌐</span>
+                    <span class="nav-item-text">Virtual Hosts</span>
+                </a>
+                <a class="nav-item" data-page="php-extensions" href="php-extensions.html">
+                    <span class="nav-item-icon">🔧</span>
+                    <span class="nav-item-text">PHP Extensions</span>
+                </a>
+                <a class="nav-item active" data-page="firewall" href="firewall.html">
+                    <span class="nav-item-icon">🔥</span>
+                    <span class="nav-item-text">Firewall</span>
+                </a>
+                <a class="nav-item" data-page="redis" href="redis.html">
+                    <span class="nav-item-icon">🔴</span>
+                    <span class="nav-item-text">Redis</span>
+                </a>
+                <a class="nav-item" data-page="system" href="system.html">
+                    <span class="nav-item-icon">⚙️</span>
+                    <span class="nav-item-text">System</span>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main">
+        <div class="container">
+            <div class="main-content">
+                <div class="content">
+                    <div class="content-header">
+                        <div>
+                            <h1 class="content-title">Firewall Management</h1>
+                            <p class="content</div>-subtitle">Manage UFW firewall rules</p>
+                        </div>
+                        <div class="content-actions">
+                            <button class="btn btn-outline" onclick="loadFirewallStatus()">
+                                <span>🔄</span> Refresh
+                            </button>
+                            <button class="btn btn-primary" onclick="showAddRuleModal()">
+                                <span>➕</span> Add Rule
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Firewall Status -->
+                    <div class="firewall-status">
+                        <div class="firewall-status-header">
+                            <div>
+                                <h2 style="font-size:</span></span></div> 1.25rem; margin-bottom: 4px;">UFW Firewall</h2>
+                                <p style="font-size: 0.875rem; color: var(--text-muted);">Uncomplicated Firewall</p>
+                            </div>
+                            <div class="firewall-status-indicator">
+                                <div class="status-dot" id="status-dot"></div>
+                                <div>
+                                    <div style="font-weight: 600;" id="status-text">Checking...</div>
+                                    <div style="font-size: 0.75rem; color: var(--text-muted);" id="status-detail</div>"></div>
+                                </div>
+                                <div style="margin-left: var(--spacing-lg);">
+                                    <label class="toggle-switch">
+                                        <input type="checkbox" id="firewall-toggle" onchange="toggleFirewall()">
+                                        <span class="toggle-slider"></span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="firewall-info">
+                            <div class="info-item">
+                                <span class="info-label">Status</span>
+                                <span class="info-value" id="info-status">-</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Active Rules</span>
+                                <span class="info-value" id="info-rules">0</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Logging</span>
+                                <span class="info-value" id="info-logging">-</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Default Policy</span>
+                                <span class="info-value" id="info-policy">-</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Preset Rules -->
+                    <div class="card" style="margin-bottom: 24px;">
+                        <div class="card-header">
+                            <h3 class="card-title">Quick Add Common Rules</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="preset-rules">
+                                <div class="preset-rule" onclick="addPresetRule('ssh', 22, 'SSH access')">
+                                    <div class="preset-rule-icon">🔐</div>
+                                    <div class="preset-rule-title">SSH</div>
+                                    <div class="preset-rule-ports">Port 22</div>
+                                </div>
+                                <div class="preset-rule" onclick="addPresetRule('http', 80, 'HTTP web server')">
+                                    <div class="preset-rule-icon">🌐</div>
+                                    <div class="preset-rule-title">HTTP</div>
+                                    <div class="preset-rule-ports">Port 80</div>
+                                </div>
+                                <div class="preset-rule" onclick="addPresetRule('https', 443, 'HTTPS web server')">
+                                    <div class="preset-rule-icon">🔒</div>
+                                    <div class="preset-rule-title">HTTPS</div>
+                                    <div class="preset-rule-ports">Port 443</div>
+                                </div>
+                                <div class="preset-rule" onclick="addPresetRule('mysql', 3306, 'MySQL database')">
+                                    <div class="preset-rule-icon">🗄️</div>
+                                    <div class="preset-rule-title">MySQL</div>
+                                    <div class="preset-rule-ports">Port 3306</div>
+                                </div>
+                                <div class="preset-rule" onclick="addPresetRule('redis', 6379, 'Redis cache')">
+                                    <div class="preset-rule-icon">🔴</div>
+                                    <div class="preset-rule-title">Redis</div>
+                                    <div class="preset-rule-ports">Port 6379</div>
+                                </div>
+                                <div class="preset-rule" onclick="addPresetRule('mongodb', 27017, 'MongoDB database')">
+                                    <div class="preset-rule-icon">🍃</div>
+                                    <div class="preset-rule-title">MongoDB</div>
+                                    <div class="preset-rule-ports">Port 27017</div>
+                                </div>
+                                <div class="preset-rule" onclick="addPresetRule('ols-admin', 7080, 'OLS WebAdmin')">
+                                    <div class="preset-rule-icon">⚡</div>
+                                    <div class="preset-rule-title">OLS Admin</div>
+                                    <div class="preset-rule-ports">Port 7080</div>
+                                </div>
+                                <div class="preset-rule" onclick="addPresetRule('ftp', 21, 'FTP server')">
+                                    <div class="preset-rule-icon">📁</div>
+                                    <div class="preset-rule-title">FTP</div>
+                                    <div class="preset-rule-ports">Port 21</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Firewall Rules -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Firewall Rules</h3>
+                            <div class="card-actions">
+                                <input type="search" id="search-input" placeholder="Search rules..." class="form-input" style="width: 250px;" onkeyup="filterRules()">
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div id="rules-container">
+                                <div class="text-center text-muted" style="padding: 40px;">
+                                    <div class="loading-skeleton" style="height: 200px; margin: 0 auto; max-width: 600px;"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Add Rule Modal -->
+    <div class="modal" id="add-rule-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Add Firewall Rule</h3>
+                <button class="modal-close" onclick="closeModal('add-rule-modal')">×</button>
+            </div>
+            <div class="modal-body">
+                <form id="rule-form">
+                    <div class="form-group">
+                        <label class="form-label required">Rule Name</label>
+                        <input type="text" id="rule-name" class="form-input" placeholder="My Custom Rule" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label required">Action</label>
+                        <select id="rule-action" class="form-select" required>
+                            <option value="allow"></select>Allow (Permit)</option>
+                            <option value="deny">Deny (Reject)</option>
+                            <option value="limit">Limit (Rate Limit)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label required">Protocol</label>
+                        <select id="rule-protocol" class="form-select" required>
+                            <option value="tcp">TCP</option>
+                            <option value="udp">UDP</option>
+                            <option value="both">Both TCP & UDP</option>
+                        </select>
+                    </div>
+
+                    <div class="form</select>-group">
+                        <label class="form-label required">Port</label>
+                        <input type="text" id="rule-port" class="form-input" placeholder="80, 443, 8080, or 3000-4000" required>
+                        <div class="form-help">Single port (80), multiple ports (80,443), or range (3000-4000)</div>
+                        <div class="common-ports">
+                            <span class="common-port" onclick="setPort('22')">SSH 22</span>
+                            <span class="common-port" onclick="setPort('80')">HTTP 80</span>
+                            <span class="common-port" onclick="setPort('443')">HTTPS 443</span>
+                            <span class="common-port" onclick="setPort('3306')">MySQL 3306</span>
+                            <span class="common-port" onclick="setPort('6379')">Redis 6379</span>
+                            <span class="common-port" onclick="setPort('7080')">OLS 7080</span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Source (Optional)</label>
+                        <input type="text" id="rule-source" class="form-input" placeholder="Any">
+                        <div class="form-help">Leave empty for 'any', or specify IP (192.168.1.100) or CIDR (192.168.1.0/24)</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Description</label>
+                        <textarea id="rule-description" class="form-textarea" placeholder="Rule description..."></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('add-rule-modal')">Cancel</button>
+                <button class="btn btn-primary" onclick="addRule()">Add Rule</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div class="modal" id="delete-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Confirm Delete Rule</h3>
+                <button class="modal-close" onclick="closeModal('delete-modal')">×</button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete this firewall rule?</p>
+                <p class="text-danger"><strong>This action cannot be undone!</strong></p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('delete-modal')">Cancel</button>
+                <button class="btn btn-danger" id="confirm-delete-btn">Delete Rule</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div</p> class="footer-bottom">
+                <p>&copy; 2024 GD Panel by GoDiMyID. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Loading Overlay -->
+    <div class="global-loading" style="display: none;">
+        <div style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: flex; align-items: center; justify-content: center; z-index: 10000;">
+            <div style="text-align: center; color: white;">
+                <div class="loading-spinner" style="width: 50px; height: 50px; border-width: 4px; margin: 0 auto 16px;"></div>
+                <p id="loading-text">Processing...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="assets/js/app.js"></script>
+    <script>
+        // API base configuration
+        const API_BASE = '../api/endpoints/';
+
+        // Firewall data
+        let firewallStatus = null;
+        let firewallRules = [];
+        let</script> filteredRules = [];
+
+        // Load firewall on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            loadFirewallStatus();
+        });
+
+        // Load firewall status
+        async function loadFirewallStatus() {
+            showLoading('Loading firewall status...');
+
+            try {
+                const response = await fetch(API_BASE + 'firewall.php?action=status');
+                const data = await response.json();
+
+                if (data.success) {
+                    firewallStatus = data.data.status;
+                    updateStatusDisplay();
+                    loadRules();
+                } else {
+                    showError(data.message || 'Failed to load firewall status');
+                }
+            } catch (error) {
+                console.error('Failed to load firewall status:', error);
+                showError('An error occurred while loading firewall status');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        // Update status display
+        function updateStatusDisplay() {
+            const isActive = firewallStatus.active;
+            const statusDot = document.getElementById('status-dot');
+            const statusText = document.getElementById('status-text');
+            const statusDetail = document.getElementById('status-detail');
+            const firewallToggle = document.getElementById('firewall-toggle');
+
+            statusDot.className = 'status-dot ' + (isActive ? 'active' : 'inactive');
+            statusText.textContent = isActive ? 'Active' : 'Inactive';
+            statusDetail.textContent = isActive ? 'Firewall is running' : 'Firewall is disabled';
+            firewallToggle.checked = isActive;
+
+            document.getElementById('info-status').textContent = isActive ? 'Active' : 'Inactive';
+            document.getElementById('info-rules').textContent = firewallStatus.rules.length;
+            document.getElementById('info-logging').textContent = firewallStatus.logging || 'off';
+            document.getElementById('info-policy').textContent = 'Deny Incoming';
+        }
+
+        // Load firewall rules
+        async function loadRules() {
+            try {
+                const response = await fetch(API_BASE + 'firewall.php?action=list');
+                const data = await response.json();
+
+                if (data.success) {
+                    firewallRules = data.data.rules || [];
+                    filteredRules = [...firewallRules];
+                    renderRules();
+                } else {
+                    showError(data.message || 'Failed to load rules');
+                }
+            } catch (error) {
+                console.error('Failed to load rules:', error);
+                showError('An error occurred while loading rules');
+            }
+        }
+
+        // Render rules
+        function renderRules() {
+            const container = document.getElementById('rules-container');
+
+            if (filteredRules.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">🔥</div>
+                        <div class="empty-state-title">No Firewall Rules Found</div>
+                        <div class="empty-state-description">Add a firewall rule to get started</div>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = filteredRules.map(rule => `
+                <div class="rule-card">
+                    <div class="rule-header">
+                        <div class="rule-info">
+                            <div class="rule-title">${rule.description || rule.rule_id}</div>
+                            <div class="rule-description">${rule.rule_id}</div>
+                        </div>
+                        <div class="rule-actions">
+                            <button class="btn btn-sm btn-danger" onclick="confirmDeleteRule('${rule.rule_id}')">Delete</button>
+                        </div>
+                    </div>
+                    <div class="rule-specs">
+                        <div class="rule-spec">
+                            <span class="rule-spec-label">Action:</span>
+                            <span class="rule-spec-value">
+                                <span class="badge badge-${rule.action === 'allow' ? 'success' : 'danger'}">${rule.action}</span>
+                            </span>
+                        </div>
+                        <div class="rule-spec">
+                            <span class="rule-spec-label">Protocol:</span>
+                            <span class="rule-spec-value">${rule.protocol.toUpperCase()}</span>
+                        </div>
+                        <div class="rule-spec">
+                            <span class="rule-spec-label">Port:</span>
+                            <span class="rule-spec-value">${rule.port}</span>
+                        </div>
+                        <div class="rule-spec">
+                            <span class="rule-spec-label">Source:</span>
+                            <span class="rule-spec-value">${rule.source || 'Any'}</span>
+                        </div>
+                        <div class="rule-spec">
+                            <span class="rule-spec-label">Status:</span>
+                            <span class="rule-spec-value">
+                                <span class="table-status ${rule.enabled ? 'active' : 'inactive'}">
+                                    <span class="table-status-dot"></span>
+                                    ${rule.enabled ? 'Active' : 'Inactive'}
+                                </span>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Filter rules
+        function filterRules() {
+            const search = document.getElementById('search-input').value.toLowerCase();
+
+            filteredRules = firewallRules.filter(rule => {
+                const searchableText = `${rule.description} ${rule.rule_id} ${rule.port} ${rule.action}`.toLowerCase();
+                return searchableText.includes(search);
+            });
+
+            renderRules();
+        }
+
+        // Toggle firewall
+        async function toggleFirewall() {
+            const enabled = document.getElementById('firewall-toggle').checked;
+
+            if (!confirm(enabled ? 'Enable firewall?' : 'Disable firewall?')) {
+                document.getElementById('firewall-toggle').checked = !enabled;
+                return;
+            }
+
+            showLoading(enabled ? 'Enabling firewall...' : 'Disabling firewall...');
+
+            try {
+                const response = await fetch(API_BASE + 'firewall.php?action=toggle', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ enabled: enabled })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    showSuccess(data.message || 'Firewall toggled successfully');
+                    await loadFirewallStatus();
+                } else {
+                    showError(data.message || 'Failed to toggle firewall');
+                    document.getElementById('firewall-toggle').checked = !enabled;
+                }
+            } catch (error) {
+                console.error('Failed to toggle firewall:', error);
+                showError('An error occurred while toggling firewall');
+                document.getElementById('firewall-toggle').checked = !enabled;
+            } finally {
+                hideLoading();
+            }
+        }
+
+        // Show add rule modal
+        function showAddRuleModal() {
+            document.getElementById('rule-form').reset();
+            document.getElementById('rule-protocol').value = 'tcp';
+            document.getElementById('rule-source').value = '';
+            openModal('add-rule-modal');
+        }
+
+        // Set port from quick select
+        function setPort(port) {
+            document.getElementById('rule-port').value = port;
+        }
+
+        // Add preset rule
+        async function addPresetRule(name, port, description) {
+            showLoading('Adding rule...');
+
+            try {
+                const response = await fetch(API_BASE + 'firewall.php?action=add', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        name: name,
+                        action: 'allow',
+                        protocol: 'tcp',
+                        port: port,
+                        source: 'any',
+                        description: description
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    showSuccess(`Rule "${name}" added successfully`);
+                    await loadFirewallStatus();
+                } else {
+                    showError(data.message || 'Failed to add rule');
+                }
+            } catch (error) {
+                console.error('Failed to add rule:', error);
+                showError('An error occurred while adding rule');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        // Add custom rule
+        async function addRule() {
+            const name = document.getElementById('rule-name').value.trim();
+            const action = document.getElementById('rule-action').value;
+            const protocol = document.getElementById('rule-protocol').value;
+            const port = document.getElementById('rule-port').value.trim();
+            const source = document.getElementById('rule-source').value.trim() || 'any';
+            const description = document.getElementById('rule-description').value.trim();
+
+            if (!name || !port) {
+                showError('Please fill in all required fields');
+                return;
+            }
+
+            showLoading('Adding rule...');
+
+            try {
+                const response = await fetch(API_BASE + 'firewall.php?action=add', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        name,
+                        action,
+                        protocol,
+                        port,
+                        source,
+                        description
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    showSuccess(data.message || 'Rule added successfully');
+                    closeModal('add-rule-modal');
+                    await loadFirewallStatus();
+                } else {
+                    showError(data.message || 'Failed to add rule');
+                }
+            } catch (error) {
+                console.error('Failed to add rule:', error);
+                showError('An error occurred while adding rule');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        // Confirm delete rule
+        function confirmDeleteRule(ruleId) {
+            document.getElementById('confirm-delete-btn').onclick = () => deleteRule(ruleId);
+            openModal('delete-modal');
+        }
+
+        // Delete rule
+        async function deleteRule(ruleId) {
+            showLoading('Deleting rule...');
+
+            try {
+                const response = await fetch(API_BASE + `firewall.php?action=delete&rule_id=${ruleId}`, {
+                    method: 'POST'
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    showSuccess(data.message || 'Rule deleted successfully');
+                    closeModal('delete-modal');
+                    await loadFirewallStatus();
+                } else {
+                    showError(data.message || 'Failed to delete rule');
+                }
+            } catch (error) {
+                console.error('Failed to delete rule:', error);
+                showError('An error occurred while deleting rule');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        // Modal helpers
+        function openModal(modalId) {
+            const modal = document.getElementById(modalId);
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal(modalId) {
+            const modal = document.getElementById(modalId);
+            modal.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        // Loading helpers
+        function showLoading(text = 'Processing...') {
+            document.getElementById('loading-text').textContent = text;
+            document.querySelector('.global-loading').style.display = 'block';
+        }
+
+        function hideLoading() {
+            document.querySelector('.global-loading').style.display = 'none';
+        }
+
+        // Alert helpers
+        function showSuccess(message) {
+            alert('✓ ' + message);
+        }
+
+        function showError(message) {
+            alert('✕ ' + message);
+        }
+    </script>
+</body>
+</html>

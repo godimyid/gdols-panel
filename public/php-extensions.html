@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PHP Extensions - GD Panel</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <style>
+        .extensions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .extension-card {
+            background: var(--</head></title></style>bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--spacing-lg);
+            padding: var(--spacing-lg);
+            transition: all var(--transition-normal);
+        }
+
+        .extension-card:hover {
+            border-color: var(--primary-color);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .extension-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: var(--spacing-md);
+        }
+
+        .extension-info {
+            flex: 1;
+        }
+
+        .extension-name {
+            font-weight: 600;
+            font-size: 1rem;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .extension-version {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            font-family: var(--font-mono);
+        }
+
+        .extension-status {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .extension-description {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            margin-bottom: var(--spacing-md);
+            min-height: 40px;
+        }
+
+        .extension-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: var(--spacing-md);
+            border-top: 1px solid var(--border-color);
+        }
+
+        .extension-checkbox {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+        }
+
+        .extension-checkbox input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            accent-color: var(--primary-color);
+        }
+
+        .extension-checkbox-label {
+            font-size: 0.875rem;
+            color: var(--text-primary);
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .btn-install {
+            padding: 6px 16px;
+            font-size: 0.875rem;
+            border-radius: var(--spacing-sm);
+            border: 1px solid var(--primary-color);
+            background: transparent;
+            color: var(--primary-color);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+        }
+
+        .btn-install:hover {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .btn-install:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .bulk-actions {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: var(--spacing-lg);
+            padding: var(--spacing-lg);
+            margin-bottom: var(--spacing-xl);
+        }
+
+        .extension-filters {
+            display: flex;
+            gap: var(--spacing-md);
+            margin-bottom: var(--spacing-lg);
+            flex-wrap: wrap;
+        }
+
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+        }
+
+        .filter-group select {
+            padding: var(--spacing-sm) var(--spacing-md);
+            border: 1px solid var(--border-color);
+            border-radius: var(--spacing-sm);
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            font-size: 0.875rem;
+        }
+
+        .category-tabs {
+            display: flex;
+            gap: var(--spacing-sm);
+            margin-bottom: var(--spacing-lg);
+            overflow-x: auto;
+            padding-bottom: var(--spacing-sm);
+        }
+
+        .category-tab {
+            padding: var(--spacing-sm) var(--spacing-md);
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            border-radius: var(--spacing-sm);
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            white-space: nowrap;
+            font-size: 0.875rem;
+        }
+
+        .category-tab:hover {
+            background: var(--bg-hover);
+            color: var(--text-primary);
+        }
+
+        .category-tab.active {
+            background: var(--primary-color);
+            border-color: var(--primary-color);
+            color: white;
+        }
+
+        .php-info {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: var(--spacing-lg);
+            border-radius: var(--spacing-lg);
+            margin-bottom: var(--spacing-xl);
+        }
+
+        .php-info-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--spacing-md);
+        }
+
+        .php-info-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+
+        .php-info-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--spacing-md);
+            font-size: 0.875rem;
+        }
+
+        .php-info-item {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .php-info-label {
+            opacity: 0.8;
+        }
+
+        .php-info-value {
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header"></body>
+        <div class="container">
+            <div class="header-content">
+                <div class="header-left">
+                    <div class="header-logo">
+                        <span class="header-logo-icon">🚀</span>
+                        <div>
+                            <div>GD Panel</div>
+                            <div class="header-brand">by GoDiMyID</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="header-right">
+                    <div class="header-user">
+                        <div class="header-user-info">
+                            <div class="header-user-name">Admin</div>
+                            <div class="header-user-role</div></div>">Administrator</div>
+                        </div>
+                        <div class="header-user-avatar">A</div>
+                    </div>
+                    <div class="header-actions">
+                        <button class="btn btn-sm btn-outline" onclick="window.location.href='login.html'" data-action="logout">
+                            <span>🚪</span> Logout
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Navigation -->
+    <nav class="nav">
+        <div class="container">
+            <div class="nav-content">
+                <a class="nav-item" data-page</span>="dashboard" href="index.html">
+                    <span class="nav-item-icon">📊</span>
+                    <span class="nav-item-text">Dashboard</span>
+                </a>
+                <a class="nav-item" data-page="vhosts" href="vhosts.html">
+                    <span class="nav-item-icon">🌐</span>
+                    <span class="nav-item-text">Virtual Hosts</span>
+                </a>
+                <a class="nav-item active" data-page="php-extensions" href="php-extensions.html">
+                    <span class="nav-item-icon">🔧</span>
+                    <span class="nav-item-text">PHP Extensions</span>
+                </a>
+                <a class="nav-item" data-page="firewall" href="firewall.html">
+                    <span class="nav-item-icon">🔥</span>
+                    <span class="nav-item-text">Firewall</span>
+                </a>
+                <a class="nav-item" data-page="redis" href="redis.html">
+                    <span class="nav-item-icon">🔴</span>
+                    <span class="nav-item-text">Redis</span>
+                </a>
+                <a class="nav-item" data-page="system" href="system.html">
+                    <span class="nav-item-icon">⚙️</span>
+                    <span class="nav-item-text">System</span>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main">
+        <div class="container">
+            <div class="main-content">
+                <div class="content">
+                    <div class="content-header">
+                        <div>
+                            <h1 class="content-title">PHP Extensions</h1>
+                            <p class="content-subtitle">Manage PHP 8.3 extensions</p>
+                        </div>
+                        <div class="content-actions</div>">
+                            <button class="btn btn-outline" onclick="location.reload()">
+                                <span>🔄</span> Refresh
+                            </button>
+                            <button class="btn btn-primary" onclick="applyChanges()">
+                                <span>✓</span> Apply Changes
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- PHP Info -->
+                    <div class="php-info">
+                        <div class="php-info-header">
+                            <div class="php-info-title">🐘 PHP Configuration</div>
+                            <div>
+                                <span class="badge badge-success" id="php-status">Running</span>
+                            </div></span></span></div>
+                        </div>
+                        <div class="php-info-details">
+                            <div class="php-info-item">
+                                <span class="php-info-label">Version:</span>
+                                <span class="php-info-value" id="php-version">Loading...</span>
+                            </div>
+                            <div class="php-info-item">
+                                <span class="php-info-label">Extensions:</span>
+                                <span class="php-info-value"><span id="ext-installed">0</span> / <span id="ext-total">0</span></span>
+                            </div>
+                            <div class="php-info-item">
+                                <span class="php-info-label">INI Path:</span>
+                                <span class="php-info-value" id="php-ini">Loading...</span>
+                            </div>
+                            <div class="php-info-item">
+                                <span class="php-info-label">Memory Limit:</span>
+                                <span class="php-info-value" id="php-memory">Loading...</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Bulk Actions -->
+                    <div class="bulk-actions">
+                        <h3 style="margin-bottom: 16px;">Quick Actions</h3>
+                        <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+                            <button class="btn btn-outline" onclick="selectAllInstalled()">
+                                <span>✓</span> Select All Installed
+                            </button>
+                            <button class="btn btn-outline" onclick="selectAllNone()">
+                                <span>✕</span> Deselect All
+                            </button>
+                            <button class="btn btn-outline" onclick="selectRecommended()">
+                                <span>⭐</span> Select Recommended
+                            </button>
+                            <button class="btn btn-warning" onclick="confirmReloadPHP()">
+                                <span>🔄</span> Reload PHP
+                            </</span></span></span></span>button>
+                        </div>
+                    </div>
+
+                    <!-- Category Tabs -->
+                    <div class="category-tabs" id="category-tabs">
+                        <button class="category-tab active" data-category="all" onclick="filterByCategory('all')">
+                            All Extensions
+                        </button>
+                        <button class="category-tab" data-category="installed" onclick="filterByCategory('installed')">
+                            Installed
+                        </button>
+                        <button class="category-tab" data-category="database" onclick="filterByCategory('database')">
+                            Database
+                        </button>
+                        <button class="category-tab" data-category="image" onclick="filterByCategory('image')">
+                            Image Processing
+                        </button>
+                        <button class="category-tab" data-category="cache" onclick="filterByCategory('cache')">
+                            Caching
+                        </button>
+                        <button class="category-tab" data-category="security" onclick="filterByCategory('security')">
+                            Security
+                        </button>
+                        <button class="category-tab" data-category="internationalization" onclick="filterByCategory('internationalization')">
+                            Internationalization
+                        </button>
+                        <button class="category-tab" data-category="other" onclick="filterByCategory('other')">
+                            Other
+                        </button>
+                    </div>
+
+                    <!-- Search -->
+                    <div style="margin-bottom: 24px;">
+                        <input type="search" id="search-input" placeholder="Search extensions..." class="form-input" style="width: 100%; max-width: 400px;" onkeyup="filterExtensions()">
+                    </div>
+
+                    <!-- Extensions Grid -->
+                    <div class="extensions-grid" id="extensions-grid">
+                        <div style="grid-column: 1 / -1; text-align: center; padding: 60px 20px;">
+                            <div class="loading-skeleton" style="height: 400px; margin: 0 auto; max-width: 600px;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-bottom">
+                <p>&copy; 2024 GD Panel by GoDiMyID. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Loading Overlay -->
+    <div class="global-loading" style="display: none;">
+        <div style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: flex; align-items: center; justify-content: center; z-index: 10000;">
+            <div style="text-align: center; color: white;">
+                <div class="loading-spinner" style="width: 50px; height: 50px; border-width: 4px; margin: 0 auto 16px;"></div>
+                <p id="loading-text">Processing...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="assets/js/app.js"></script>
+    <script>
+        // API base configuration
+        const API_BASE = '../api/endpoints/';
+
+        // Extensions data
+        let extensions = [];
+        let filteredExtensions = [];
+        let currentCategory = 'all';
+
+        // Recommended extensions
+        const recommendedExtensions = ['mysqli', 'pdo', 'pdo_mysql', 'zip', 'gd', 'curl', 'mbstring', 'json', 'xml', 'opcache', 'redis</script>', 'imagick'];
+
+        // Category mapping
+        const categoryMap = {
+            'mysqli': 'database', 'pdo': 'database', 'pdo_mysql': 'database',
+            'imagick': 'image', 'gd': 'image', 'exif': 'image',
+            'redis': 'cache', 'apcu': 'cache', 'memcached': 'cache', 'opcache': 'cache',
+            'intl': 'internationalization',
+            'ioncube': 'security'
+        };
+
+        // Load extensions on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            loadExtensions();
+        });
+
+        // Load extensions from API
+        async function loadExtensions() {
+            showLoading('Loading extensions...');
+
+            try {
+                const response = await fetch(API_BASE + 'php.php?action=extensions');
+                const data = await response.json();
+
+                if (data.success) {
+                    extensions = data.data.extensions || [];
+                    filteredExtensions = [...extensions];
+                    updatePHPInfo(data.data);
+                    renderExtensions();
+                } else {
+                    showError(data.message || 'Failed to load extensions');
+                }
+            } catch (error) {
+                console.error('Failed to load extensions:', error);
+                showError('An error occurred while loading extensions');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        // Update PHP info
+        function updatePHPInfo(data) {
+            document.getElementById('php-version').textContent = data.php_version || 'Unknown';
+            document.getElementById('php-ini').textContent = data.php_ini_path || 'Unknown';
+            document.getElementById('php-memory').textContent = data.settings?.memory_limit || 'Unknown';
+            document.getElementById('ext-installed').textContent = data.installed || 0;
+            document.getElementById('ext-total').textContent = data.total || 0;
+        }
+
+        // Render extensions
+        function renderExtensions() {
+            const grid = document.getElementById('extensions-grid');
+
+            if (filteredExtensions.length === 0) {
+                grid.innerHTML = `
+                    <div style="grid-column: 1 / -1; text-align: center; padding: 60px 20px;">
+                        <div class="empty-state">
+                            <div class="empty-state-icon">🔧</div>
+                            <div class="empty-state-title">No Extensions Found</div>
+                            <div class="empty-state-description">Try changing your search or category filter</div>
+                        </div>
+                    </div>
+                `;
+                return;
+            }
+
+            grid.innerHTML = filteredExtensions.map(ext => {
+                const category = getCategory(ext.name);
+                const canInstall = !ext.installed && ext.can_install;
+                const isRecommended = recommendedExtensions.includes(ext.name);
+
+                return `
+                    <div class="extension-card" data-category="${category}" data-name="${ext.name.toLowerCase()}">
+                        <div class="extension-header">
+                            <div class="extension-info">
+                                <div class="extension-name">
+                                    ${ext.display_name || ext.name}
+                                    ${isRecommended ? '<span style="color: var(--warning-color); margin-left: 4px;">⭐</span>' : ''}
+                                </div>
+                                <div class="extension-version">${ext.name}</div>
+                            </div>
+                            <div class="extension-status">
+                                ${ext.installed ?
+                                    '<span class="badge badge-success">Installed</span>' :
+                                    '<span class="badge badge-warning">Not Installed</span>'}
+                                ${ext.installed && ext.enabled ?
+                                    '<span class="badge badge-primary">Enabled</span>' : ''}
+                            </div>
+                        </div>
+                        <div class="extension-description">${ext.description || 'No description available'}</div>
+                        <div class="extension-actions">
+                            ${ext.installed ? `
+                                <label class="extension-checkbox">
+                                    <input type="checkbox" ${ext.enabled ? 'checked' : ''} onchange="toggleExtension('${ext.name}', this.checked)">
+                                    <span class="extension-checkbox-label">Enable</span>
+                                </label>
+                            ` : `
+                                ${canInstall ?
+                                    `<button class="btn-install" onclick="installExtension('${ext.name}')">Install</button>` :
+                                    `<span class="text-muted" style="font-size: 0.875rem;">Not available</span>`}
+                            `}
+                            <div style="font-size: 0.75rem; color: var(--text-muted);">
+                                ${ext.category || 'general'}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Get category for extension
+        function getCategory(extName) {
+            return categoryMap[extName] || 'other';
+        }
+
+        // Filter by category
+        function filterByCategory(category) {
+            currentCategory = category;
+
+            // Update tab styles
+            document.querySelectorAll('.category-tab').forEach(tab => {
+                tab.classList.remove('active');
+                if (tab.dataset.category === category) {
+                    tab.classList.add('active');
+                }
+            });
+
+            applyFilters();
+        }
+
+        // Filter extensions by search and category
+        function filterExtensions() {
+            applyFilters();
+        }
+
+        // Apply all filters
+        function applyFilters() {
+            const search = document.getElementById('search-input').value.toLowerCase();
+
+            filteredExtensions = extensions.filter(ext => {
+                // Category filter
+                if (currentCategory === 'installed') {
+                    if (!ext.installed) return false;
+                } else if (currentCategory !== 'all') {
+                    if (getCategory(ext.name) !== currentCategory) return false;
+                }
+
+                // Search filter
+                if (search) {
+                    const searchableText = `${ext.name} ${ext.display_name} ${ext.description || ''}`.toLowerCase();
+                    if (!searchableText.includes(search)) return false;
+                }
+
+                return true;
+            });
+
+            renderExtensions();
+        }
+
+        // Toggle extension enable/disable
+        function toggleExtension(name, enabled) {
+            const ext = extensions.find(e => e.name === name);
+            if (ext) {
+                ext.enabled = enabled;
+            }
+        }
+
+        // Install extension
+        async function installExtension(name) {
+            if (!confirm(`Install extension "${name}"?`)) {
+                return;
+            }
+
+            showLoading('Installing extension...');
+
+            try {
+                const response = await fetch(API_BASE + 'php.php?action=install', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ extension: name })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    showSuccess(data.message || 'Extension installed successfully');
+                    await loadExtensions();
+                } else {
+                    showError(data.message || 'Failed to install extension');
+                }
+            } catch (error) {
+                console.error('Failed to install extension:', error);
+                showError('An error occurred while installing extension');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        // Apply changes
+        async function applyChanges() {
+            const enabledExtensions = extensions
+                .filter(e => e.installed && e.enabled)
+                .map(e => e.name);
+
+            showLoading('Applying changes...');
+
+            try {
+                const response = await fetch(API_BASE + 'php.php?action=update_extensions', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ extensions: enabledExtensions })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    showSuccess('PHP extensions updated successfully. Reloading...');
+                    await loadExtensions();
+                } else {
+                    showError(data.message || 'Failed to update extensions');
+                }
+            } catch (error) {
+                console.error('Failed to update extensions:', error);
+                showError('An error occurred while updating extensions');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        // Select all installed
+        function selectAllInstalled() {
+            extensions.filter(e => e.installed).forEach(e => {
+                e.enabled = true;
+            });
+            renderExtensions();
+        }
+
+        // Select all none
+        function selectAllNone() {
+            extensions.forEach(e => {
+                e.enabled = false;
+            });
+            renderExtensions();
+        }
+
+        // Select recommended
+        function selectRecommended() {
+            extensions.forEach(e => {
+                if (e.installed && recommendedExtensions.includes(e.name)) {
+                    e.enabled = true;
+                }
+            });
+            renderExtensions();
+        }
+
+        // Confirm reload PHP
+        function confirmReloadPHP() {
+            if (confirm('Reload PHP? This will restart the web server briefly.')) {
+                reloadPHP();
+            }
+        }
+
+        // Reload PHP
+        async function reloadPHP() {
+            showLoading('Reloading PHP...');
+
+            try {
+                const response = await fetch(API_BASE + 'php.php?action=reload_php', {
+                    method: 'POST'
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    showSuccess('PHP reloaded successfully');
+                } else {
+                    showError(data.message || 'Failed to reload PHP');
+                }
+            } catch (error) {
+                console.error('Failed to reload PHP:', error);
+                showError('An error occurred while reloading PHP');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        // Loading helpers
+        function showLoading(text = 'Loading...') {
+            document.getElementById('loading-text').textContent = text;
+            document.querySelector('.global-loading').style.display = 'block';
+        }
+
+        function hideLoading() {
+            document.querySelector('.global-loading').style.display = 'none';
+        }
+
+        // Alert helpers
+        function showSuccess(message) {
+            alert('✓ ' + message);
+        }
+
+        function showError(message) {
+            alert('✕ ' + message);
+        }
+    </script>
+</body>
+</html>

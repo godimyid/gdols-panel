@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Virtual Hosts - GD Panel</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="header-left">
+                    <div class="header-logo">
+                        <span class="</head></title></body>header-logo-icon">🚀</span>
+                        <div>
+                            <div>GD Panel</div>
+                            <div class="header-brand">by GoDiMyID</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="header-right">
+                    <div class="header-user">
+                        <div class="header-user-info">
+                            <div class="header-user-name">Admin</div>
+                            <div class="header-user-role">Administrator</div>
+                        </div>
+                        <div class="header-user-avatar">A</div>
+                    </div>
+                    <div class="header-actions">
+                        <</div></div>button class="btn btn-sm btn-outline" onclick="window.location.href='login.html'" data-action="logout">
+                            <span>🚪</span> Logout
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Navigation -->
+    <nav class="nav">
+        <div class="container">
+            <div class="nav-content">
+                <a class="nav-item" data-page="dashboard" href="index.html">
+                    <span class="nav-item-icon">📊</span>
+                    <span class="nav-item-text">Dashboard</span>
+                </a</span>>
+                <a class="nav-item active" data-page="vhosts" href="vhosts.html">
+                    <span class="nav-item-icon">🌐</span>
+                    <span class="nav-item-text">Virtual Hosts</span>
+                </a>
+                <a class="nav-item" data-page="php-extensions" href="php-extensions.html">
+                    <span class="nav-item-icon">🔧</span>
+                    <span class="nav-item-text">PHP Extensions</span>
+                </a>
+                <a class="nav-item" data-page="firewall" href="firewall.html">
+                    <span class="nav-item-icon">🔥</span>
+                    <span class="nav-item-text">Firewall</span>
+                </a>
+                <a class="nav-item" data-page="redis" href="redis.html">
+                    <span class="nav-item-icon">🔴</span>
+                    <span class="nav-item-text">Redis</span>
+                </a>
+                <a class="nav-item" data-page="system" href="system.html">
+                    <span class="nav-item-icon">⚙️</span>
+                    <span class="nav-item-text">System</span>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main">
+        <div class="container">
+            <div class="main-content">
+                <!-- Content Area -->
+                <div class="content">
+                    <div class="content-header">
+                        <div>
+                            <h1 class="content-title">Virtual Hosts</h1>
+                            <p class="content-subtitle">Manage your virtual hosts</p>
+                        </div>
+                        <div class="content-actions">
+                            <button class="btn btn-primary" onclick="showAddModal()">
+                                <span>➕</span> Add Virtual Host
+                            </button></div></span>
+                        </div>
+                    </div>
+
+                    <!-- Stats Cards -->
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <div class="stat-icon primary">🌐</div>
+                                <div class="stat-info">
+                                    <div class="stat-label">Total Hosts</div>
+                                    <div class="stat-value" id="stat-total">0</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <div class="stat-icon success">✓</div>
+                                <div class="stat-info">
+                                    <div class="stat-label">Active</div>
+                                    <div class="stat-value" id="stat-active">0</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <div class="stat-icon warning">📝</div>
+                                <div class="stat-info">
+                                    <div class="stat-label">WordPress</div>
+                                    <div class="stat-value" id="stat-wordpress">0</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <div class="stat-icon danger">🔧</div>
+                                <div class="stat-info">
+                                    <div class="stat-label">Custom/Proxy</div>
+                                    <div class="stat-value" id="stat-custom">0</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Search and Filter -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">All Virtual Hosts</h3>
+                            <div class="card-actions">
+                                <input type="search" id="search-input" placeholder="Search domains..." class="form-input" style="width: 250px;" onkeyup="filterVhosts()">
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-container">
+                                <table class="table" id="vhosts-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Domain</th>
+                                            <th>Type</th>
+                                            <th>Document Root</th>
+                                            <th>Backend</th>
+                                            <th>SSL</th>
+                                            <th>Status</th>
+                                            <th>Actions</th>
+                                        </tr</thead></tr></th></th></th></th></th>>
+                                    </thead>
+                                    <tbody id="vhosts-tbody">
+                                        <tr>
+                                            <td colspan="7" class="text-center text-muted">Loading...</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Add/Edit Virtual Host Modal -->
+    <div class="modal" id="vhost-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="modal</tr>-title">Add Virtual Host</h3>
+                <button class="modal-close" onclick="closeModal('vhost-modal')">×</button>
+            </div>
+            <div class="modal-body">
+                <form id="vhost-form" data-ajax="true" data-action="../api/endpoints/vhost.php?action=create" data-method="POST">
+                    <input type="hidden" id="vhost-id" name="id">
+
+                    <div class="form-group">
+                        <label class="form-label required">Domain</label>
+                        <input type="text" id="vhost-domain" name="domain" class="form-input" placeholder="yourdomain.com" required>
+                        <div class="form-help">Enter your domain name without http:// or www</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label required">Type</label>
+                        <select id="vhost-type" name="type" class="form-select" required onchange="toggleTypeFields()">
+                            <option value="wordpress">WordPress</option>
+                            <option value="custom">Custom Application</option>
+                            <option value="proxy">Reverse Proxy</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label required">Admin Email</label>
+                        <input type="email" id="vhost-email" name="email" class="form-input" placeholder="admin@example.com" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Document Root</label>
+                        <input type="text" id="vhost-docroot" name="docroot" class="form-input" placeholder="/var/www/example.com">
+                        <div class="form-help">Leave empty to use default path</div>
+                    </div>
+
+                    <!-- Proxy fields -->
+                    <div id="proxy-fields" style="display: none;">
+                        <div class="form-group">
+                            <label class="form-label required">Backend Host</label>
+                            <input type="text" id="vhost-backend-host" name="backend_host" class="form-input" placeholder="127.0.0.1">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label required">Backend Port</label>
+                            <input type="number" id="vhost-backend-port" name="backend_port" class="form-input" placeholder="3000" min="1" max="65535">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">URI Path</label>
+                            <input type="text" id="vhost-uri" name="uri" class="form-input" value="/" placeholder="/">
+                            <div class="form-help">Path to proxy (default: /)</div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">SSL Certificate (Optional)</label>
+                        <textarea id="vhost-ssl-cert" name="ssl_cert" class="form-textarea" placeholder="Paste your SSL certificate here"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">SSL Key (Optional)</label>
+                        <textarea id="vhost-ssl-key" name="ssl_key" class="form-textarea" placeholder="Paste your SSL private key here"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('vhost-modal')">Cancel</button>
+                <button class="btn btn-primary" onclick="submitVhostForm()">Save Virtual Host</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div class="modal" id="delete-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Confirm Delete</h3>
+                <button class="modal-close" onclick="closeModal('delete-modal')">×</button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete this virtual host?</p>
+                <p class="text-danger"><strong>This action cannot be undone!</strong></</p>p>
+                <p>All files in the document root will be deleted.</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('delete-modal')">Cancel</button>
+                <button class="btn btn-danger" id="confirm-delete-btn">Delete</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-bottom">
+                <p>&copy; 2024 GD Panel by GoDiMyID. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Loading Overlay -->
+    <div class="global-loading" style="display: none;">
+        <div style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: flex; align-items: center; justify-content: center; z-index: 10000;">
+            <div style="text-align: center; color: white;">
+                <div class="loading-spinner" style="width: 50px; height: 50px; border-width: 4px; margin: 0 auto 16px;"></div>
+                <p>Loading...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="assets/js/app.js"></script>
+    <script>
+        // API base configuration
+        const API_BASE = '../api/endpoints/';
+
+        // Virtual hosts data
+        let vhosts = [];
+        let filteredVhosts = [];
+
+        // Load virtual hosts on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            loadVirtualHosts();
+        });
+
+        // Load virtual hosts from</script> API
+        async function loadVirtualHosts() {
+            showLoading();
+
+            try {
+                const response = await fetch(API_BASE + 'vhost.php?action=list');
+                const data = await response.json();
+
+                if (data.success) {
+                    vhosts = data.data.vhosts || [];
+                    filteredVhosts = [...vhosts];
+                    updateStats();
+                    renderVhosts();
+                } else {
+                    showError(data.message || 'Failed to load virtual hosts');
+                }
+            } catch (error) {
+                console.error('Failed to load virtual hosts:', error);
+                showError('An error occurred while loading virtual hosts');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        // Update statistics
+        function updateStats() {
+            document.getElementById('stat-total').textContent = vhosts.length;
+            document.getElementById('stat-active').textContent = vhosts.filter(v => v.status === 'active').length;
+            document.getElementById('stat-wordpress').textContent = vhosts.filter(v => v.type === 'wordpress').length;
+            document.getElementById('stat-custom').textContent = vhosts.filter(v => ['custom', 'proxy'].includes(v.type)).length;
+        }
+
+        // Render virtual hosts table
+        function renderVhosts() {
+            const tbody = document.getElementById('vhosts-tbody');
+
+            if (filteredVhosts.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="7" class="text-center">
+                            <div class="empty-state">
+                                <div class="empty-state-icon">🌐</div>
+                                <div class="empty-state-title">No Virtual Hosts Found</div>
+                                <div class="empty-state-description">Create your first virtual host to get started</div>
+                                <button class="btn btn-primary" onclick="showAddModal()" style="margin-top: 16px;">
+                                    ➕ Add Virtual Host</tr>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            tbody.innerHTML = filteredVhosts.map(vhost => `
+                <tr>
+                    <td>
+                        <div>
+                            <strong>${vhost.domain}</strong><br>
+                            <small class="text-muted">${vhost.email}</small>
+                        </div>
+                    </td>
+                    <td>
+                        <span class="badge badge-${getTypeBadgeClass(vhost.type)}">${getTypeLabel(vhost.type)}</span>
+                    </td>
+                    <td>
+                        <code style="font-size:</tr></td></div></td></td> 12px; word-break: break-all;">${vhost.docroot}</code>
+                    </td>
+                    <td>
+                        ${vhost.type === 'proxy' ? `
+                            <code style="font-size: 12px;">
+                                ${vhost.backend_host}:${vhost.backend_port}
+                            </code>
+                        ` : '-'}
+                    </td>
+                    <td>
+                        ${vhost.ssl_enabled ?
+                            '<span class="badge badge-success">SSL Enabled</span>' :
+                            '<span class="text-muted">No SSL</span>'}
+                    </td>
+                    <td>
+                        <span class="</td></td></td>table-status ${vhost.status === 'active' ? 'active' : 'inactive'}">
+                            <span class="table-status-dot"></span>
+                            ${vhost.status.charAt(0).toUpperCase() + vhost.status.slice(1)}
+                        </span>
+                    </td>
+                    <td>
+                        <div style="display: flex; gap: 4px;">
+                            <button class="btn btn-sm btn-outline" onclick="editVhost('${vhost.id}')">Edit</button>
+                            <button class="btn btn-sm btn-danger" onclick="confirmDelete('${vhost.id}', '${vhost.domain}')"></td>Delete</button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        // Get type badge class
+        function getTypeBadgeClass(type) {
+            const classes = {
+                'wordpress': 'primary',
+                'custom': 'success',
+                'proxy': 'info'
+            };
+            return classes[type] || 'secondary';
+        }
+
+        // Get type label
+        function getTypeLabel(type) {
+            const labels = {
+                'wordpress': 'WordPress',
+                'custom': 'Custom',
+                'proxy': 'Proxy'
+            };
+            return labels[type] || type;
+        }
+
+        // Filter virtual hosts
+        function filterVhosts() {
+            const search = document.getElementById('search-input').value.toLowerCase();
+
+            filteredVhosts = vhosts.filter(vhost => {
+                return vhost.domain.toLowerCase().includes(search) ||
+                       vhost.docroot.toLowerCase().includes(search) ||
+                       vhost.email.toLowerCase().includes(search);
+            });
+
+            renderVhosts();
+        }
+
+        // Show add modal
+        function showAddModal() {
+            document.getElementById('modal-title').textContent = 'Add Virtual Host';
+            document.getElementById('vhost-form').reset();
+            document.getElementById('vhost-id').value = '';
+            document.getElementById('vhost-type').value = 'wordpress';
+            toggleTypeFields();
+            openModal('vhost-modal');
+        }
+
+        // Toggle type-specific fields
+        function toggleTypeFields() {
+            const type = document.getElementById('vhost-type').value;
+            const proxyFields = document.getElementById('proxy-fields');
+
+            if (type === 'proxy') {
+                proxyFields.style.display = 'block';
+            } else {
+                proxyFields.style.display = 'none';
+            }
+        }
+
+        // Edit virtual host
+        async function editVhost(id) {
+            showLoading();
+
+            try {
+                const response = await fetch(API_BASE + `vhost.php?action=get&id=${id}`);
+                const data = await response.json();
+
+                if (data.success) {
+                    const vhost = data.data;
+
+                    document.getElementById('modal-title').textContent = 'Edit Virtual Host';
+                    document.getElementById('vhost-id').value = vhost.id;
+                    document.getElementById('vhost-domain').value = vhost.domain;
+                    document.getElementById('vhost-domain').disabled = true; // Cannot change domain
+                    document.getElementById('vhost-type').value = vhost.type;
+                    document.getElementById('vhost-type').disabled = true; // Cannot change type
+                    document.getElementById('vhost-email').value = vhost.email;
+                    document.getElementById('vhost-docroot').value = vhost.docroot;
+
+                    if (vhost.type === 'proxy') {
+                        document.getElementById('vhost-backend-host').value = vhost.backend_host || '';
+                        document.getElementById('vhost-backend-port').value = vhost.backend_port || '';
+                        document.getElementById('vhost-uri').value = '/';
+                    }
+
+                    if (vhost.ssl_enabled) {
+                        document.getElementById('vhost-ssl-cert').value = vhost.ssl_cert || '';
+                        document.getElementById('vhost-ssl-key').value = vhost.ssl_key || '';
+                    }
+
+                    toggleTypeFields();
+                    openModal('vhost-modal');
+                } else {
+                    showError(data.message || 'Failed to load virtual host');
+                }
+            } catch (error) {
+                console.error('Failed to load virtual host:', error);
+                showError('An error occurred while loading virtual host');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        // Submit form
+        async function submitVhostForm() {
+            const form = document.getElementById('vhost-form');
+            const formData = new FormData(form);
+            const data = Object.fromEntries(formData.entries());
+            const id = data.id;
+
+            // Validate
+            if (!data.domain || !data.email || !data.type) {
+                showError('Please fill in all required fields');
+                return;
+            }
+
+            showLoading();
+
+            try {
+                const url = id ?
+                    API_BASE + `vhost.php?action=update&id=${id}` :
+                    API_BASE + 'vhost.php?action=create';
+
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    showSuccess(result.message || 'Virtual host saved successfully');
+                    closeModal('vhost-modal');
+                    await loadVirtualHosts();
+                } else {
+                    showError(result.message || 'Failed to save virtual host');
+                }
+            } catch (error) {
+                console.error('Failed to save virtual host:', error);
+                showError('An error occurred while saving virtual host');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        // Confirm delete
+        function confirmDelete(id, domain) {
+            document.getElementById('confirm-delete-btn').onclick = () => deleteVhost(id, domain);
+            openModal('delete-modal');
+        }
+
+        // Delete virtual host
+        async function deleteVhost(id, domain) {
+            showLoading();
+
+            try {
+                const response = await fetch(API_BASE + `vhost.php?action=delete&id=${id}&confirm=true`, {
+                    method: 'POST'
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    showSuccess(data.message || 'Virtual host deleted successfully');
+                    closeModal('delete-modal');
+                    await loadVirtualHosts();
+                } else {
+                    showError(data.message || 'Failed to delete virtual host');
+                }
+            } catch (error) {
+                console.error('Failed to delete virtual host:', error);
+                showError('An error occurred while deleting virtual host');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        // Modal helpers
+        function openModal(modalId) {
+            const modal = document.getElementById(modalId);
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal(modalId) {
+            const modal = document.getElementById(modalId);
+            modal.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        // Loading helpers
+        function showLoading() {
+            document.querySelector('.global-loading').style.display = 'block';
+        }
+
+        function hideLoading() {
+            document.querySelector('.global-loading').style.display = 'none';
+        }
+
+        // Alert helpers
+        function showSuccess(message) {
+            alert('✓ ' + message);
+        }
+
+        function showError(message) {
+            alert('✕ ' + message);
+        }
+    </script>
+</body>
+</html>

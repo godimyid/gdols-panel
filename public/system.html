@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>System - GD Panel</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="header-left">
+                    <div class="header-logo">
+                        <span class</head></title></body>="header-logo-icon">🚀</span>
+                        <div>
+                            <div>GD Panel</div>
+                            <div class="header-brand">by GoDiMyID</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="header-right">
+                    <div class="header-user">
+                        <div class="header-user-info">
+                            <div class="header-user-name">Admin</div>
+                            <div class="header-user-role">Administrator</div>
+                        </div>
+                        <div class="header-user-avatar">A</div>
+                    </div>
+                    <div class="header</div></div>-actions">
+                        <button class="btn btn-sm btn-outline" onclick="window.location.href='login.html'" data-action="logout">
+                            <span>🚪</span> Logout
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Navigation -->
+    <nav class="nav">
+        <div class="container">
+            <div class="nav-content">
+                <a class="nav-item" data-page="dashboard" href="index.html">
+                    <span class="nav-item-icon">📊</span>
+                    <span class="nav-item-text"></span>Dashboard</span>
+                </a>
+                <a class="nav-item" data-page="vhosts" href="vhosts.html">
+                    <span class="nav-item-icon">🌐</span>
+                    <span class="nav-item-text">Virtual Hosts</span>
+                </a>
+                <a class="nav-item" data-page="php-extensions" href="php-extensions.html">
+                    <span class="nav-item-icon">🔧</span>
+                    <span class="nav-item-text">PHP Extensions</span>
+                </a>
+                <a class="nav-item" data-page="firewall" href="firewall.html">
+                    <span class="nav-item-icon">🔥</span>
+                    <span class="nav-item-text">Firewall</span>
+                </a>
+                <a class="nav-item" data-page="redis" href="redis.html">
+                    <span class="nav-item-icon">🔴</span>
+                    <span class="nav-item-text">Redis</span>
+                </a>
+                <a class="nav-item active" data-page="system" href="system.html">
+                    <span class="nav-item-icon">⚙️</span>
+                    <span class="nav-item-text">System</span>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main">
+        <div class="container">
+            <div class="main-content">
+                <div class="content">
+                    <div class="content-header">
+                        <div>
+                            <h1 class="content-title">System Information</h1>
+                            <p class="content-subtitle">Server details and resource monitoring</p>
+                        </div>
+                        <div class="content-actions">
+                            <button class="btn btn-outline" onclick="loadSystemInfo()">
+                                <span>🔄</span> Refresh</div></span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- System Overview -->
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <div class="stat-icon primary">💻</div>
+                                <div class="stat-info">
+                                    <div class="stat-label">Hostname</div>
+                                    <div class="stat-value" id="stat-hostname">Loading...</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <div class="stat-icon success">⏱️</div>
+                                <div class="stat-info">
+                                    <div class="stat-label">Uptime</div>
+                                    <div class="stat-value" id="stat-uptime">Loading...</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <div class="stat-icon warning">🌐</div>
+                                <div class="stat-info">
+                                    <div class="stat-label">OS</div>
+                                    <div class="stat-value" id="stat-os">Loading...</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <div class="stat-icon danger">🔧</div>
+                                <div class="stat-info">
+                                    <div class="stat-label">Architecture</div>
+                                    <div class="stat-value" id="stat-arch">Loading...</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- System Details -->
+                    <div class="card" style="margin-bottom: 24px;">
+                        <div class="card-header">
+                            <h3 class="card-title">System Details</h3>
+                        </div>
+                        <div class="card-body">
+                            <dl style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px;">
+                                <div>
+                                    <dt style="color: var(--text-muted); font-size: 0.875rem;">Hostname</dt>
+                                    <dd style="font-weight: 600; margin-top: 4px;" id="info-hostname">-</dd>
+                                </div>
+                                <div>
+                                    <dt style</div></div>="color: var(--text-muted); font-size: 0.875rem;">Operating System</dt>
+                                    <dd style="font-weight: 600; margin-top: 4px;" id="info-os">-</dd>
+                                </div>
+                                <div>
+                                    <dt style="color: var(--text-muted); font-size: 0.875rem;">Kernel Version</dt>
+                                    <dd style="font-weight: 600; margin-top: 4px;" id="info-kernel">-</dd>
+                                </div>
+                                <div>
+                                    <dt style="color: var</div></div>(--text-muted); font-size: 0.875rem;">Architecture</dt>
+                                    <dd style="font-weight: 600; margin-top: 4px;" id="info-arch">-</dd>
+                                </div>
+                                <div>
+                                    <dt style="color: var(--text-muted); font-size: 0.875rem;">PHP Version</dt>
+                                    <dd style="font-weight: 600; margin-top: 4px;" id="info-php">-</dd>
+                                </div>
+                                <div>
+                                    <dt style="color: var(--text-muted);</div></div> font-size: 0.875rem;">Server Time</dt>
+                                    <dd style="font-weight: 600; margin-top: 4px;" id="info-time">-</dd>
+                                </div>
+                            </dl>
+                        </div>
+                    </div>
+
+                    <!-- Installed Software -->
+                    <div class="card" style="margin-bottom: 24px;">
+                        <div class="card-header">
+                            <h3 class="card-title">Installed Software</h3>
+                        </div>
+                        <div class="card-body">
+                            <div id="software-list" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 16px;">
+                                <div class="text-center text-muted" style="padding: 40px;">Loading...</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Resource Usage -->
+                    <div class="card" style="margin-bottom: 24px;">
+                        <div class="card-header">
+                            <h3 class="card-title">Resource Usage</h3>
+                        </div>
+                        <div class="card-body">
+                            <div style="margin-bottom: 24px;">
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                                    <span style="font-weight: 500;">CPU Usage</span>
+                                    <span id="cpu-usage-text">0%</span>
+                                </div>
+                                <div class="progress">
+                                    <div class="progress-bar" id="cpu-bar" style="width: 0%;"></div>
+                                </div>
+                            </div>
+                            <div style="margin-bottom: 24px;">
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                                    <span style="font-weight: 500;">Memory Usage</span>
+                                    <span id="memory-usage-text">0%</span>
+                                </div>
+                                <div class="progress">
+                                    <div class="progress-bar success" id="memory-bar" style="width: 0%;"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                                    <span style="font-weight: 500;">Disk Usage (/)</span></div>
+                                    <span id="disk-usage-text">0%</span>
+                                </div>
+                                <div class="progress">
+                                    <div class="progress-bar warning" id="disk-bar" style="width: 0%;"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Network Interfaces -->
+                    <div class="card" style="margin-bottom: 24px;">
+                        <div class="card-header">
+                            <h3 class="card-title">Network Interfaces</h3>
+                        </div>
+                        <div class="card-body">
+                            <div id="network-list" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px;">
+                                <div class="text-center text-muted" style="padding: 40px;">Loading...</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Disk Mounts -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Disk Mounts</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-container">
+                                <table class="table" id="disk-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Filesystem</th>
+                                            <th>Size</th>
+                                            <th>Used</th>
+                                            <th>Available</th>
+                                            <th>Usage%</th>
+                                            <th>Mount</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="disk-tbody">
+                                        <tr>
+                                            <td colspan="6" class="text-center text-muted">Loading...</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div></thead></tr></th></th></th></th></th></th></tr>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-bottom">
+                <p>&copy; 2024 GD Panel by GoDiMyID. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Loading Overlay -->
+    <div class="global-loading" style="display: none;">
+        <div style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: flex; align-items: center; justify-content: center; z-index: 10000;">
+            <div style="text-align: center; color: white;">
+                <div class="loading-spinner" style="width: 50px; height: 50px; border-width: 4px; margin: 0 auto 16px;"></div>
+                <p id="loading-text">Loading...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="assets/js/app.js"></script>
+    <script>
+        // API base configuration
+        const API_BASE = '../api/endpoints/';
+
+        // System data
+        let systemInfo = null;
+
+        // Load on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            loadSystemInfo();
+
+            // Auto-refresh every 30 seconds
+            setInterval(loadSystemInfo, 30000);
+        });
+
+        // Load system information
+        async function loadSystemInfo() {
+            showLoading('Loading system information...');
+
+            try {
+                const [infoRes, resourceRes] = await Promise.all([
+                    fetch(API_BASE</script> + 'system.php?action=info'),
+                    fetch(API_BASE + 'system.php?action=resources')
+                ]);
+
+                const infoData = await infoRes.json();
+                const resourceData = await resourceRes.json();
+
+                if (infoData.success) {
+                    systemInfo = infoData.data;
+                    updateSystemDisplay();
+                }
+
+                if (resourceData.success) {
+                    updateResourcesDisplay(resourceData.data);
+                }
+            } catch (error) {
+                console.error('Failed to load system info:', error);
+                showError('An error occurred while loading system information');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        // Update system display
+        function updateSystemDisplay() {
+            // Update stats cards
+            document.getElementById('stat-hostname').textContent = systemInfo.hostname || '-';
+            document.getElementById('stat-uptime').textContent = systemInfo.uptime || '-';
+            document.getElementById('stat-os').textContent = (systemInfo.os || '').split(' ')[0] || '-';
+            document.getElementById('stat-arch').textContent = systemInfo.architecture || '-';
+
+            // Update system details
+            document.getElementById('info-hostname').textContent = systemInfo.hostname || '-';
+            document.getElementById('info-os').textContent = systemInfo.os || '-';
+            document.getElementById('info-kernel').textContent = systemInfo.kernel || '-';
+            document.getElementById('info-arch').textContent = systemInfo.architecture || '-';
+            document.getElementById('info-php').textContent = systemInfo.php_version || '-';
+            document.getElementById('info-time').textContent = new Date().toLocaleString();
+
+            // Update software list
+            const softwareList = document.getElementById('software-list');
+            if (systemInfo.software && Object.keys(systemInfo.software).length > 0) {
+                softwareList.innerHTML = Object.entries(systemInfo.software).map(([name, version]) => `
+                    <div style="background: var(--bg-secondary); padding: 16px; border-radius: 8px; border: 1px solid var(--border-color);">
+                        <div style="font-weight: 600; margin-bottom: 4px;">${name}</div>
+                        <div style="font-size: 0.875rem; color: var(--text-muted); font-family: var(--font-mono);">${version}</div>
+                    </div>
+                `).join('');
+            }
+
+            // Update network interfaces
+            const networkList = document.getElementById('network-list');
+            if (systemInfo.network_interfaces && systemInfo.network_interfaces.length > 0) {
+                networkList.innerHTML = systemInfo.network_interfaces.map(iface => `
+                    <div style="background: var(--bg-secondary); padding: 16px; border-radius: 8px; border: 1px solid var(--border-color);">
+                        <div style="font-weight: 600; margin-bottom: 8px;">${iface.name}</div>
+                        <div style="font-size: 0.875rem; color: var(--text-muted);">
+                            ${iface.addresses.map(addr => `<code style="background: var(--bg-tertiary); padding: 2px 6px; border-radius: 4px; margin-right: 4px;">${addr}</code>`).join('')}
+                        </div>
+                        ${iface.stats ? `
+                            <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 8px;">
+                                RX: ${formatBytes(iface.stats.rx_bytes)} | TX: ${formatBytes(iface.stats.tx_bytes)}
+                            </div>
+                        ` : ''}
+                    </div>
+                `).join('');
+            }
+
+            // Update disk mounts
+            if (systemInfo.disk_mounts && systemInfo.disk_mounts.length > 0) {
+                const tbody = document.getElementById('disk-tbody');
+                tbody.innerHTML = systemInfo.disk_mounts.map(mount => `
+                    <tr>
+                        <td><code style="font-size: 12px;">${mount.filesystem}</code></td>
+                        <td>${mount.size}</td>
+                        <td>${mount.used}</td>
+                        <td>${mount.available}</td>
+                        <td>
+                            <div style="display: flex; align-items: center; gap: 8px;"></tr></td>
+                                <div class="progress" style="flex: 1; height: 6px;">
+                                    <div class="progress-bar ${mount.usage_percent > 80 ? 'danger' : mount.usage_percent > 60 ? 'warning' : 'success'}" style="width: ${mount.usage_percent}%;"></div>
+                                </div>
+                                <span style="font-weight: 600;">${mount.usage_percent}%</span>
+                            </div>
+                        </td>
+                        <td><code style="font-size: 12px;">${mount.mount}</code></td>
+                    </tr>
+                `).join('');
+            }
+        }
+
+        // Update resources display
+        function updateResourcesDisplay(resources) {
+            // CPU
+            const cpuPercent = resources.cpu.usage_percent || 0;
+            document.getElementById('cpu-usage-text').textContent = cpuPercent.toFixed(1) + '%';
+            document.getElementById('cpu-bar').style.width = cpuPercent + '%';
+
+            // Memory
+            const memPercent = resources.memory.usage_percent || 0;
+            document.getElementById('memory-usage-text').textContent = memPercent.toFixed(1) + '%';
+            document.getElementById('memory-bar').style.width = memPercent + '%';
+
+            // Disk
+            const diskPercent = resources.disk.usage_percent || 0;
+            document.getElementById('disk-usage-text').textContent = diskPercent + '%';
+            document.getElementById('disk-bar').style.width = diskPercent + '%';
+        }
+
+        // Format bytes
+        function formatBytes(bytes) {
+            const units = ['B', 'KB', 'MB', 'GB', 'TB'];
+            const bytes = Math.max(bytes, 0);
+            const pow = Math.floor((bytes ? Math.log(bytes) : 0) / Math.log(1024));
+            const pow = Math.min(pow, units.length - 1);
+            const size = bytes / Math.pow(1024, pow);
+            return round(size, 2) + ' ' + units[pow];
+        }
+
+        function round(value, precision) {
+            const multiplier = Math.pow(10, precision || 0);
+            return Math.round(value * multiplier) / multiplier;
+        }
+
+        // Loading helpers
+        function showLoading(text = 'Loading...') {
+            document.getElementById('loading-text').textContent = text;
+            document.querySelector('.global-loading').style.display = 'block';
+        }
+
+        function hideLoading() {
+            document.querySelector('.global-loading').style.display = 'none';
+        }
+
+        // Alert helpers
+        function showSuccess(message) {
+            alert('✓ ' + message);
+        }
+
+        function showError(message) {
+            alert('✕ ' + message);
+        }
+    </script>
+</body>
+</html>

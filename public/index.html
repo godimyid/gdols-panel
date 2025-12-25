@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - GD Panel</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="header-left">
+                    <div class="header-logo">
+                        <span class</head></title></body>="header-logo-icon">🚀</span>
+                        <div>
+                            <div>GD Panel</div>
+                            <div class="header-brand">by GoDiMyID</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="header-right">
+                    <div class="header-user">
+                        <div class="header-user-info">
+                            <div class="header-user-name">Admin</div>
+                            <div class="header-user-role">Administrator</div>
+                        </div>
+                        <div class="header-user-avatar">A</div>
+                    </div>
+                    <div class="header-actions"></div></div>
+                        <button class="btn btn-sm btn-outline" onclick="window.location.href='login.html'" data-action="logout">
+                            <span>🚪</span> Logout
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Navigation -->
+    <nav class="nav">
+        <div class="container">
+            <div class="nav-content">
+                <a class="nav-item active" data-page="dashboard" href="dashboard.html">
+                    <span class="nav-item-icon">📊</span>
+                    <span class="nav-item-text">Dashboard</span></span>
+                </a>
+                <a class="nav-item" data-page="vhosts" href="vhosts.html">
+                    <span class="nav-item-icon">🌐</span>
+                    <span class="nav-item-text">Virtual Hosts</span>
+                </a>
+                <a class="nav-item" data-page="php-extensions" href="php-extensions.html">
+                    <span class="nav-item-icon">🔧</span>
+                    <span class="nav-item-text">PHP Extensions</span>
+                </a>
+                <a class="nav-item" data-page="firewall" href="firewall.html">
+                    <span class="nav-item-icon">🔥</span>
+                    <span class="nav-item-text">Firewall</span>
+                </a>
+                <a class="nav-item" data-page="redis" href="redis.html">
+                    <span class="nav-item-icon">🔴</span>
+                    <span class="nav-item-text">Redis</span>
+                </a>
+                <a class="nav-item" data-page="system" href="system.html">
+                    <span class="nav-item-icon">⚙️</span>
+                    <span class="nav-item-text">System</span>
+                </a>
+                <a class="nav-item" data-page="databases" href="databases.html">
+                    <span class="nav-item-icon">🗄️</span>
+                    <span class="nav-item-text">Databases</span>
+                </a>
+                <a class="nav-item" data-page="backups" href="backups.html">
+                    <span class="nav-item-icon">💾</span>
+                    <span class="nav-item-text">Backups</span>
+                </a>
+                <a class="nav-item" data-page="logs" href="logs.html">
+                    <span class="nav-item-icon">📋</span>
+                    <span class="nav-item-text">Logs</span>
+                </a>
+                <a class="nav-item" data-page="settings" href="settings.html">
+                    <span class="nav-item-icon">🔐</span>
+                    <span class="nav-item-text">Settings</span>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main">
+        <div class="container">
+            <div class="main-content">
+                <!-- Sidebar -->
+                <aside class="sidebar">
+                    <div class="sidebar-section">
+                        <h3 class="sidebar-title">Quick Actions</h3>
+                        <ul class="sidebar-menu">
+                            <li class="sidebar-menu-item">
+                                <a class="sidebar-menu-link" data-page="vhosts" href="vhosts.html">
+                                    <span class="sidebar-menu-icon">➕</span>
+                                    <span class="sidebar-menu-text">Add Virtual Host</span>
+                                </a>
+                            </li>
+                            <li class="sidebar-menu-item">
+                                <a class="sidebar-menu-link" data-page="php-extensions" href="php-extensions.html">
+                                    <span class="sidebar-menu-icon">🔧</span>
+                                    <span class="sidebar-menu-text">PHP Extensions</span>
+                                </a>
+                            </li>
+                            <li class="sidebar-menu-item">
+                                <a class="sidebar-menu-link" data-page="firewall" href="firewall.html">
+                                    <span class="sidebar-menu-icon">🔥</span>
+                                    <span class="sidebar-menu-text">Firewall Rules</span>
+                                </a>
+                            </li>
+                            <li class="sidebar-menu-item">
+                                <a class="sidebar-menu-link" data-page="backups" href="backups.html">
+                                    <span class="sidebar-menu-icon">💾</span>
+                                    <span class="sidebar-menu-text">Create Backup</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="sidebar-section">
+                        <h3 class="sidebar-title">System Status</h3>
+                        <ul class="sidebar-menu">
+                            <li class="sidebar-menu-item">
+                                <div class="sidebar-menu-link" style="cursor: default;">
+                                    <span class="sidebar-menu-icon">⚡</span>
+                                    <span class="sidebar-menu-text">OpenLiteSpeed</span>
+                                    <span class="badge badge-success">Running</span>
+                                </div>
+                            </li>
+                            <li class="sidebar-menu-item">
+                                <div class="sidebar-menu-link" style="cursor: default;">
+                                    <span class="sidebar-menu-icon">🗄️</span>
+                                    <span class="sidebar-menu-text">MariaDB</span>
+                                    <span class="badge badge-success">Running</span>
+                                </div>
+                            </li>
+                            <li class="sidebar-menu-item">
+                                <div class="sidebar-menu-link" style="cursor: default;">
+                                    <span class="sidebar-menu-icon">🔴</span>
+                                    <span class="sidebar-menu-text">Redis</span>
+                                    <span class="badge badge-success">Running</span>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="sidebar-section">
+                        <h3 class="sidebar-title">Resources</h3>
+                        <div style="margin-bottom: 16px;">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 4px; font-size: 12px; color: var(--text-muted);">
+                                <span>CPU Usage</span>
+                                <span id="cpu-usage">0%</span>
+                            </div>
+                            <div class="progress">
+                                <div class="progress-bar" id="cpu-bar" style="width: 0%;"></div>
+                            </div>
+                        </div>
+                        <div style="margin-bottom: 16px;">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 4px; font-size: 12px; color: var(--text-muted);">
+                                <span>Memory Usage</span>
+                                <span id="memory-usage">0%</span</span>>
+                            </div>
+                            <div class="progress">
+                                <div class="progress-bar success" id="memory-bar" style="width: 0%;"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 4px; font-size: 12px; color: var(--text-muted);">
+                                <span>Disk Usage</span>
+                                <span id="disk-usage">0%</span>
+                            </div>
+                            <div class="progress">
+                                <div class="progress-bar warning</div>" id="disk-bar" style="width: 0%;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </aside>
+
+                <!-- Content Area -->
+                <div class="content">
+                    <div class="content-header">
+                        <div>
+                            <h1 class="content-title">Dashboard</h1>
+                            <p class="content-subtitle">Server overview and quick actions</p>
+                        </div>
+                        <div class="content-actions">
+                            <button class="btn btn-outline" onclick="refreshDashboard()">
+                                <span>🔄</span> Refresh
+                            </button>
+                        </</div></span>div>
+                    </div>
+
+                    <!-- Stats Grid -->
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <div class="stat-icon primary">⚡</div>
+                                <div class="stat-info">
+                                    <div class="stat-label">CPU Usage</div>
+                                    <div class="stat-value" id="stat-cpu">0%</div>
+                                    <div class="stat-change positive">
+                                        <span id="stat-cpu-change">↑ 0%</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <div class="stat-icon success">💾</div>
+                                <div class="stat-info">
+                                    <div class="stat-label">Memory Usage</div>
+                                    <div class="stat-value" id="stat-memory">0%</div>
+                                    <div class="stat-change positive">
+                                        <span id="stat-memory-change">↑ 0%</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <div class="stat-icon warning">💿</div>
+                                <div class="stat-info">
+                                    <div class="stat-label">Disk Usage</div>
+                                    <div class="stat-value" id="stat-disk">0%</div>
+                                    <div class="stat-change">
+                                        <span id="stat-disk-info">0 GB / 0 GB</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <div class="stat-icon danger">🌐</div>
+                                <div class="stat-info">
+                                    <div class="stat-label">Virtual Hosts</div>
+                                    <div class="stat-value" id="stat-vhosts">0</div>
+                                    <div class="stat-change">
+                                        <span id="stat-vhosts-active">0 active</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Quick Actions -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Quick Actions</h3>
+                        </div>
+                        <div class="card-body">
+                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px;">
+                                <a href="vhosts.html" class="btn btn-outline" style="justify-content: flex-start; height: auto; padding: 16px;">
+                                    <span style="font-size: 24px;">🌐</span>
+                                    <div style="text-align: left; margin-left: 12px;">
+                                        <div style="font-weight: 600;">Add Virtual Host</div>
+                                        <div style="font-size: 12px; color: var(--text-muted);">Create new website</div>
+                                    </div>
+                                </a>
+                                <a href="php-extensions.html" class="btn btn-outline" style="justify-content: flex-start; height: auto; padding: 16px;">
+                                    <span style="font-size: 24px;">🔧</span>
+                                    <div style="text-align: left; margin-left: 12px;">
+                                        <div style="font-weight: 600;">PHP Extensions</div>
+                                        <div style="font-size: 12px; color: var(--text-muted);">Manage extensions</div>
+                                    </div>
+                                </a>
+                                <a href="firewall.html" class="btn btn-outline" style="justify-content: flex-start; height: auto; padding: 16px;">
+                                    <span style="font-size: 24px;">🔥</span>
+                                    <div style="text-align: left; margin-left: 12px;">
+                                        <div style="font-weight: 600;">Firewall</div>
+                                        <div style="font-size: 12px; color: var(--text-muted);">Manage UFW rules</div>
+                                    </div>
+                                </a>
+                                <a href="redis.html" class="btn btn-outline" style="justify-content: flex-start; height: auto; padding: 16px;">
+                                    <span style="font-size: 24px;">🔴</span>
+                                    <div style="text-align: left; margin-left: 12px;">
+                                        <div style="font-weight: 600;">Redis</div>
+                                        <div style="font-size: 12px; color: var(--text-muted);">Cache management</div>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Recent Activity & Service Status -->
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; margin-top: 24px;">
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title">Recent Activity</h3>
+                            </div>
+                            <div class="card-body">
+                                <div id="recent-activity">
+                                    <p class="text-muted" style="text-align: center; padding: 20px;">Loading...</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title">Service Status</h3>
+                            </div>
+                            <div class="card-body">
+                                <div id="service-status">
+                                    <p class="text-muted" style="text-align: center; padding: 20px;">Loading...</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4 class="footer-title">GD Panel</h4>
+                    <p style="font-size: 14px; color: var(--text-muted);">
+                        OpenLiteSpeed Management Panel<br>
+                        Version 1.0.0
+                    </p>
+                </div>
+                <div class="footer-section">
+                    <h4 class="footer-title">Resources</h4>
+                    <ul class="footer-links">
+                        <li><a href="https://godi.my.id" target="_blank">Documentation</a></li>
+                        <li><a href="https://godi.my.id" target="_blank">Support</a></li>
+                        <li><a href="https://github.com/godimyid/gd-panel" target="_blank">GitHub</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4 class="footer-title">Author</h4>
+                    <p style="font-size: 14px; color: var(--text-muted);">
+                        <strong>GoDiMyID</strong><br>
+                        <a href="https://godi.my.id" target="_blank" style="color: var(--primary-color);">godi.my.id</a>
+                    </p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 GD Panel by GoDiMyID. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Loading Overlay -->
+    <div class="global-loading" style="</strong>display: none;">
+        <div style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: flex; align-items: center; justify-content: center; z-index: 10000;">
+            <div style="text-align: center; color: white;">
+                <div class="loading-spinner" style="width: 50px; height: 50px; border-width: 4px; margin: 0 auto 16px;"></div>
+                <p>Loading...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="assets/js/app.js"></script>
+    <script>
+        // Dashboard data refresh
+        async function refreshDashboard() {
+            showLoading();
+            try {
+                // Simulate API call - replace with actual API
+                await new Promise(resolve => setTimeout(resolve, 1000));
+
+                // Update stats with mock data
+                updateStat('cpu', Math.floor(Math.random() * 30) + 10);
+                updateStat('memory', Math.floor(Math.random() * 40) + 30</script>);
+                updateStat('disk', Math.floor(Math.random() * 20) + 40);
+                updateStat('vhosts', Math.floor(Math.random() * 10) + 1);
+
+                // Update activity and service status
+                loadRecentActivity();
+                loadServiceStatus();
+
+                showSuccess('Dashboard refreshed');
+            } catch (error) {
+                showError('Failed to refresh dashboard');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        function updateStat(type, value) {
+            const statValue = document.getElementById(`stat-${type}`);
+            if (statValue) {
+                statValue.textContent = type === 'vhosts' ? value : value + '%';
+            }
+
+            // Update sidebar progress bars
+            if (type === 'cpu') {
+                document.getElementById('cpu-usage').textContent = value + '%';
+                document.getElementById('cpu-bar').style.width = value + '%';
+            } else if (type === 'memory') {
+                document.getElementById('memory-usage').textContent = value + '%';
+                document.getElementById('memory-bar').style.width = value + '%';
+            } else if (type === 'disk') {
+                document.getElementById('disk-usage').textContent = value + '%';
+                document.getElementById('disk-bar').style.width = value + '%';
+            }
+        }
+
+        function loadRecentActivity() {
+            const container = document.getElementById('recent-activity');
+            const activities = [
+                { icon: '🌐', title: 'Virtual host created', time: '2 minutes ago' },
+                { icon: '🔧', title: 'PHP extension installed', time: '15 minutes ago' },
+                { icon: '🔥', title: 'Firewall rule added', time: '1 hour ago' },
+                { icon: '💾', title: 'Backup completed', time: '2 hours ago' }
+            ];
+
+            container.innerHTML = activities.map(activity => `
+                <div style="display: flex; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--border-color);">
+                    <div style="font-size: 24px;">${activity.icon}</div>
+                    <div style="flex: 1;">
+                        <div style="font-weight: 500;">${activity.title}</div>
+                        <div style="font-size: 12px; color: var(--text-muted);">${activity.time}</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function loadServiceStatus() {
+            const container = document.getElementById('service-status');
+            const services = [
+                { name: 'OpenLiteSpeed', version: '1.8.1', status: 'running' },
+                { name: 'MariaDB', version: '10.11.4', status: 'running' },
+                { name: 'Redis', version: '7.2.3', status: 'running' },
+                { name: 'PHP', version: '8.3.0', status: 'running' }
+            ];
+
+            container.innerHTML = services.map(service => `
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--border-color);">
+                    <div>
+                        <div style="font-weight: 500;">${service.name}</div>
+                        <div style="font-size: 12px; color: var(--text-muted);">${service.version}</div>
+                    </div>
+                    <span class="table-status ${service.status}">
+                        <span</div> class="table-status-dot"></span>
+                        ${service.status.charAt(0).toUpperCase() + service.status.slice(1)}
+                    </span>
+                </div>
+            `).join('');
+        }
+
+        function showLoading() {
+            document.querySelector('.global-loading').style.display = 'block';
+        }
+
+        function hideLoading() {
+            document.querySelector('.global-loading').style.display = 'none';
+        }
+
+        function showSuccess(message) {
+            alert('✓ ' + message);
+        }
+
+        function showError(message) {
+            alert('✕ ' + message);
+        }
+
+        // Initial load
+        document.addEventListener('DOMContentLoaded', () => {
+            refreshDashboard();
+
+            // Auto-refresh every 30 seconds
+            setInterval(refreshDashboard, 30000);
+        });
+    </script>
+</body>
+</html>

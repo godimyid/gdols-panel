@@ -1,0 +1,914 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Redis - GD Panel</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <style>
+        .redis-status-card {
+            background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+            color: white;
+            border-radius: var(--spacing-lg);
+            padding:</head></title></style> var(--spacing-xl);
+            margin-bottom: var(--spacing-xl);
+        }
+
+        .redis-status-card.stopped {
+            background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
+        }
+
+        .redis-status-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .redis-status-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .redis-status-indicator {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+        }
+
+        .status-badge {
+            padding: var(--spacing-sm) var(--spacing-md);
+            border-radius: var(--spacing-md);
+            font-weight: 600;
+            font-size: 0.875rem;
+        }
+
+        .status-badge.running {
+            background: rgba(16, 185, 129, 0.2);
+            color: #10b981;
+        }
+
+        .status-badge.stopped {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+        }
+
+        .redis-metrics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: var(--spacing-md);
+            margin-top: var(--spacing-lg);
+        }
+
+        .metric-item {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: var(--spacing-md);
+            padding: var(--spacing-md);
+        }
+
+        .metric-label {
+            font-size: 0.75rem;
+            opacity: 0.8;
+            margin-bottom: var(--spacing-xs);
+        }
+
+        .metric-value {
+            font-size: 1.25rem;
+            font-weight: 700;
+        }
+
+        .config-section {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--spacing-lg);
+            padding: var(--spacing-lg);
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .config-section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--spacing-lg);
+            padding-bottom: var(--spacing-md);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .config-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: var(--spacing-lg);
+        }
+
+        .key-browser {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--spacing-lg);
+            padding: var(--spacing-lg);
+        }
+
+        .key-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: var(--spacing-sm) 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .key-item:last-child {
+            border-bottom: none;
+        }
+
+        .key-name {
+            font-family: var(--font-mono);
+            font-size: 0.875rem;
+            color: var(--primary-color);
+        }
+
+        .key-type {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            padding: 2px 8px;
+            background: var(--bg-tertiary);
+            border-radius: var(--spacing-sm);
+        }
+
+        .key-actions {
+            display: flex;
+            gap: var(--spacing-xs);
+        }
+
+        .danger-zone {
+            background: rgba(239, 68, 68, 0.05);
+            border: 2px solid var(--danger-color);
+            border-radius: var(--spacing-lg);
+            padding: var(--spacing-lg);
+        }
+
+        .command-history {
+            background: #1a1a2e;
+            border-radius: var(--spacing-lg);
+            padding: var(--spacing-lg);
+            font-family: var(--font-mono);
+            font-size: 0.875rem;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .command-item {
+            padding: var(--spacing-sm) 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            color: #a0aec0;
+        }
+
+        .command-item:last-child {
+            border-bottom: none;
+        }
+
+        .command-time {
+            color: #718096;
+            font-size: 0.75rem;
+            margin-right: var(--spacing-sm);
+        }
+
+        .command-text {
+            color: #63b3ed;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="header-left">
+                    <div class="header-logo">
+                        <span class="header-logo-icon">🚀</span>
+                        <div>
+                            <div>GD Panel</div>
+                            <div class="header-brand">by GoDiMyID</div>
+                        </div>
+                    </div>
+                </div>
+                <</body></div></div>div class="header-right">
+                    <div class="header-user">
+                        <div class="header-user-info">
+                            <div class="header-user-name">Admin</div>
+                            <div class="header-user-role">Administrator</div>
+                        </div>
+                        <div class="header-user-avatar">A</div>
+                    </div>
+                    <div class="header-actions">
+                        <button class="btn btn-sm btn-outline" onclick="window.location.href='login.html'" data-action="logout">
+                            <span>🚪</span> Logout
+                        </button>
+                    </div>
+                </div>
+            </div></span>
+        </div>
+    </header>
+
+    <!-- Navigation -->
+    <nav class="nav">
+        <div class="container">
+            <div class="nav-content">
+                <a class="nav-item" data-page="dashboard" href="index.html">
+                    <span class="nav-item-icon">📊</span>
+                    <span class="nav-item-text">Dashboard</span>
+                </a>
+                <a class="nav-item" data-page="vhosts" href="vhosts.html">
+                    <span class="nav-item-icon">🌐</span>
+                    <span class="nav-item-text">Virtual Hosts</span>
+                </a>
+                <a class="nav-item" data-page="php-extensions" href="php-extensions.html">
+                    <span class="nav-item-icon">🔧</span>
+                    <span class="nav-item-text">PHP Extensions</span>
+                </a>
+                <a class="nav-item" data-page="firewall" href="firewall.html">
+                    <span class="nav-item-icon">🔥</span>
+                    <span class="nav-item-text">Firewall</span>
+                </a>
+                <a class="nav-item active" data-page="redis" href="redis.html">
+                    <span class="nav-item-icon">🔴</span>
+                    <span class="nav-item-text">Redis</span>
+                </a>
+                <a class="nav-item" data-page="system" href="system.html">
+                    <span class="nav-item-icon">⚙️</span>
+                    <span class="nav-item-text">System</span>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main">
+        <div class="container">
+            <div class="main-content">
+                <div class="content">
+                    <div class="content-header">
+                        <div></div>
+                            <h1 class="content-title">Redis Management</h1>
+                            <p class="content-subtitle">Configure and monitor Redis cache server</p>
+                        </div>
+                        <div class="content-actions">
+                            <button class="btn btn-outline" onclick="loadRedisStatus()">
+                                <span>🔄</span> Refresh
+                            </button>
+                            <button class="btn btn-outline" onclick="restartRedis()">
+                                <span>🔁</span> Restart
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Redis Status Card -->
+                    <div class="redis-status-card" id="status-card"></span></span>
+                        <div class="redis-status-header">
+                            <div>
+                                <div class="redis-status-title">🔴 Redis Server</div>
+                                <div style="font-size: 0.875rem; opacity: 0.9; margin-top: 4px;">In-memory data structure store</div>
+                            </div>
+                            <div class="redis-status-indicator">
+                                <div class="status-badge" id="status-badge">Checking...</div>
+                            </div>
+                        </div>
+
+                        <div class="redis-metrics" id="redis-metrics">
+                            <div class="metric-item</div>">
+                                <div class="metric-label">Memory Used</div>
+                                <div class="metric-value" id="metric-memory">-</div>
+                            </div>
+                            <div class="metric-item">
+                                <div class="metric-label">Connections</div>
+                                <div class="metric-value" id="metric-connections">-</div>
+                            </div>
+                            <div class="metric-item">
+                                <div class="metric-label">Commands/sec</div>
+                                <div class="metric-value" id="metric-commands">-</div>
+                            </div>
+                            <div class="metric-item">
+                                <div class="metric-label">Uptime</div>
+                                <div class="metric-value" id="metric-uptime">-</div>
+                            </div>
+                            <div class="metric-item">
+                                <div class="metric-label">Hit Rate</div>
+                                <div class="metric-value" id="metric-hitrate">-</div>
+                            </div>
+                            <div class="metric-item">
+                                <div class="metric-label">Total Keys</div>
+                                <div class="metric-value" id="metric-keys">-</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Configuration -->
+                    <div class="config-section">
+                        <div class="config-section-header">
+                            <h3 class="card-title">Configuration</h3>
+                            <button class="btn btn-primary" onclick="saveConfig()">
+                                <span>💾</span> Save & Restart
+                            </button>
+                        </div>
+                        <div class="card-body">
+                            <form id="config-form">
+                                <div class="config-grid">
+                                    <div class="form-group">
+                                        <label class="form-label">Max Memory</label>
+                                        <select id="config-maxmemory" class="form-select">
+                                            <option value="256mb</span>">256 MB</option>
+                                            <option value="512mb">512 MB</option>
+                                            <option value="1g">1 GB</option>
+                                            <option value="2g">2 GB (Recommended for 8GB RAM)</option>
+                                            <option value="4g">4 GB</option>
+                                            <option value="8g">8 GB</option>
+                                        </select>
+                                        <div class="form-help">Maximum memory Redis can use</div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label class="form-label">Memory Policy</label>
+                                        <select id="config-policy" class="form-select">
+                                            <option value="allkeys-lru">allkeys-lru (Remove least recently used)</option>
+                                            <option value="volatile-lru">volatile-lru (LRU for keys with expiry)</option>
+                                            <option value="allkeys-random">allkeys-random (Random removal)</option>
+                                            <option value="volatile-random">volatile-random (Random with expiry)</option>
+                                            <option value="volatile-ttl">volatile-ttl (Shortest TTL first)</option>
+                                            <option value="noeviction">noeviction (Return errors when full)</option>
+                                        </select>
+                                        <div class="form-help">How Redis handles memory when full</div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label class="form-label">Timeout (seconds)</label>
+                                        <input type="number" id="config-timeout" class="form-input" min="0" max="3600" value="300">
+                                        <div class="form-help">Close idle connections after N seconds</div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label class="form-label">TCP Keepalive</label>
+                                        <input type="number" id="config-keepalive" class="form-input" min="0" max="3600" value="60">
+                                        <div class="form-help">TCP keepalive probes in seconds</div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Key Browser -->
+                    <div class="key-browser">
+                        <div class="card-header" style="border-bottom: none; padding-bottom: 0; margin-bottom: var(--spacing-md);">
+                            <h3 class="card-title">Key Browser</h3>
+                            <div class="card-actions">
+                                <input type="search" id="key-search" placeholder="Search keys..." class="form-input" style="width: 250px;" onkeyup="searchKeys()">
+                                <select id="key-database" class="form-select" style="width: 150px;" onchange="loadKeys()">
+                                    <option value="0">DB 0</option>
+                                    <option value="1">DB 1</option>
+                                    <option value="2">DB 2</option>
+                                    <option value="3">DB 3</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div id="keys-container">
+                            <div class="text-center text-muted" style="padding: 40px;">
+                                <div class="loading-skeleton" style="height: 200px; margin: 0 auto; max-width: 600px;"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Command Monitor -->
+                    <div class="card" style="margin-top: 24px;">
+                        <div class="card-header">
+                            <h3 class="card-title">Recent Commands (Slowlog)</h3>
+                            <button class="btn btn-sm btn-outline" onclick="loadSlowlog()">
+                                <span>🔄</span> Refresh
+                            </button>
+                        </div>
+                        <div class="card-body">
+                            <div class="command-history" id="slowlog-container">
+                                <div class="text-center text-muted" style="padding: 20px;">
+                                    Loading command history...
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Danger Zone -->
+                    <div class="danger-zone" style="margin-top: 24px;">
+                        <h3 style="color: var(--danger-color); margin-bottom: var(--spacing-md);">⚠️ Danger Zone</span></h3>
+                        <p style="color: var(--text-muted); margin-bottom: var(--spacing-lg);">These actions cannot be undone. Use with caution.</p>
+                        <div style="display: flex; gap: var(--spacing-md); flex-wrap: wrap;">
+                            <button class="btn btn-warning" onclick="flushDatabase()">
+                                <span>🗑️</span> Flush Database
+                            </button>
+                            <button class="btn btn-danger" onclick="flushAll()">
+                                <span>💥</span> Flush All Databases
+                            </button>
+                        </div>
+                    </div>
+                </</span></span>div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Key Details Modal -->
+    <div class="modal" id="key-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="key-modal-title">Key Details</h3>
+                <button class="modal-close" onclick="closeModal('key-modal')">×</button>
+            </div>
+            <div class="modal-body" id="key-modal-body">
+                Loading...
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-danger" id="delete-key-btn" onclick="deleteKey()">Delete Key</button>
+                <button class="btn btn-secondary" onclick="closeModal('key-modal')">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Confirm Flush Modal -->
+    <div class="modal" id="flush-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Confirm Flush</h3>
+                <button class="modal-close" onclick="closeModal('flush-modal')">×</button>
+            </div>
+            <div class="modal-body">
+                <p id="flush-message">Are you sure?</p>
+                <p class="text-danger" style="margin-top: 16px;"><strong>This action cannot be undone!</strong></p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('flush-modal')">Cancel</button>
+                <button class="btn btn-danger" id="confirm-flush-btn">Confirm Flush</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-bottom">
+                <p>&copy; 2024 GD Panel by GoDiMyID. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Loading Overlay -->
+    <div class="global-loading" style="display: none;">
+        <div style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: flex; align-items: center; justify-content: center; z-index: 10000;">
+            <div style="text-align: center; color: white;">
+                <div class="loading-spinner" style="width: 50px; height: 50px; border-width: 4px; margin: 0 auto 16px;"></div>
+                <p id="loading-text">Processing...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="assets/js/app.js"></script>
+    <script>
+        // API base configuration
+        const API_BASE = '../api/endpoints/';
+
+        // Redis data
+        let redisStatus = null;
+        let redisConfig = null;</script>
+        let currentKey = null;
+        let currentDatabase = 0;
+
+        // Load on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            loadRedisStatus();
+            loadSlowlog();
+        });
+
+        // Auto-refresh every 10 seconds
+        setInterval(() => {
+            loadRedisStatus();
+        }, 10000);
+
+        // Load Redis status
+        async function loadRedisStatus() {
+            try {
+                const [statusRes, configRes] = await Promise.all([
+                    fetch(API_BASE + 'redis.php?action=status'),
+                    fetch(API_BASE + 'redis.php?action=config')
+                ]);
+
+                const statusData = await statusRes.json();
+                const configData = await configRes.json();
+
+                if (statusData.success) {
+                    redisStatus = statusData.data;
+                    updateStatusDisplay();
+                }
+
+                if (configData.success) {
+                    redisConfig = configData.data.config;
+                    loadConfigForm();
+                }
+
+                loadKeys();
+            } catch (error) {
+                console.error('Failed to load Redis status:', error);
+            }
+        }
+
+        // Update status display
+        function updateStatusDisplay() {
+            const statusCard = document.getElementById('status-card');
+            const statusBadge = document.getElementById('status-badge');
+            const running = redisStatus.running;
+
+            statusCard.className = 'redis-status-card ' + (running ? '' : 'stopped');
+            statusBadge.className = 'status-badge ' + (running ? 'running' : 'stopped');
+            statusBadge.textContent = running ? '● Running' : '● Stopped';
+
+            if (running && redisStatus.info) {
+                const info = parseRedisInfo(redisStatus.info);
+
+                document.getElementById('metric-memory').textContent = info.used_memory_human || '-';
+                document.getElementById('metric-connections').textContent = info.connected_clients || '0';
+                document.getElementById('metric-commands').textContent = info.instantaneous_ops_per_sec || '0';
+                document.getElementById('metric-uptime').textContent = (info.uptime_in_days || 0) + ' days';
+                document.getElementById('metric-hitrate').textContent = (info.keyspace_hit_rate || 0) + '%';
+                document.getElementById('metric-keys').textContent = info.total_keys || '0';
+            } else {
+                document.getElementById('metric-memory').textContent = '-';
+                document.getElementById('metric-connections').textContent = '-';
+                document.getElementById('metric-commands').textContent = '-';
+                document.getElementById('metric-uptime').textContent = '-';
+                document.getElementById('metric-hitrate').textContent = '-';
+                document.getElementById('metric-keys').textContent = '-';
+            }
+        }
+
+        // Parse Redis INFO output
+        function parseRedisInfo(info) {
+            const lines = info.split('\n');
+            const parsed = {};
+
+            lines.forEach(line => {
+                if (line.includes(':')) {
+                    const [key, value] = line.split(':');
+                    parsed[key.trim()] = value.trim();
+                }
+            });
+
+            return parsed;
+        }
+
+        // Load config form
+        function loadConfigForm() {
+            if (redisConfig) {
+                document.getElementById('config-maxmemory').value = redisConfig.maxmemory || '2g';
+                document.getElementById('config-policy').value = redisConfig.maxmemory_policy || 'allkeys-lru';
+                document.getElementById('config-timeout').value = redisConfig.timeout || 300;
+                document.getElementById('config-keepalive').value = redisConfig.tcp_keepalive || 60;
+            }
+        }
+
+        // Save configuration
+        async function saveConfig() {
+            const config = {
+                maxmemory: document.getElementById('config-maxmemory').value,
+                maxmemory_policy: document.getElementById('config-policy').value,
+                timeout: parseInt(document.getElementById('config-timeout').value),
+                tcp_keepalive: parseInt(document.getElementById('config-keepalive').value)
+            };
+
+            showLoading('Saving configuration...');
+
+            try {
+                const response = await fetch(API_BASE + 'redis.php?action=update_config', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(config)
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    showSuccess('Configuration saved. Redis restarted.');
+                    await loadRedisStatus();
+                } else {
+                    showError(data.message || 'Failed to save configuration');
+                }
+            } catch (error) {
+                console.error('Failed to save config:', error);
+                showError('An error occurred while saving configuration');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        // Restart Redis
+        async function restartRedis() {
+            if (!confirm('Restart Redis server? This will briefly interrupt caching.')) {
+                return;
+            }
+
+            showLoading('Restarting Redis...');
+
+            try {
+                const response = await fetch(API_BASE + 'redis.php?action=restart', {
+                    method: 'POST'
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    showSuccess('Redis restarted successfully');
+                    await loadRedisStatus();
+                } else {
+                    showError(data.message || 'Failed to restart Redis');
+                }
+            } catch (error) {
+                console.error('Failed to restart Redis:', error);
+                showError('An error occurred while restarting Redis');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        // Load keys
+        async function loadKeys() {
+            const database = parseInt(document.getElementById('key-database').value);
+            const search = document.getElementById('key-search').value;
+
+            try {
+                const response = await fetch(`${API_BASE}redis.php?action=get_keys&db=${database}&pattern=${search || '*'}`);
+                const data = await response.json();
+
+                if (data.success) {
+                    renderKeys(data.data.keys || []);
+                }
+            } catch (error) {
+                console.error('Failed to load keys:', error);
+            }
+        }
+
+        // Render keys
+        function renderKeys(keys) {
+            const container = document.getElementById('keys-container');
+
+            if (keys.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">🔑</div>
+                        <div class="empty-state-title">No Keys Found</div>
+                        <div class="empty-state-description">This database is empty or no keys match your search</div>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = keys.map(key => `
+                <div class="key-item">
+                    <div style="flex: 1;">
+                        <div class="key-name">${key.key}</div>
+                        <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 4px;">
+                            Size: ${key.size || 0} | TTL: ${key.ttl === -1 ? 'No expiry' : key.ttl + 's'}
+                        </div>
+                    </div>
+                    <div class="key-actions">
+                        <span class="key-type">${key.type}</span>
+                        <button class="btn btn-sm btn-outline" onclick="viewKey('${key.key}')">View</button>
+                        <button class="btn btn-sm btn-danger" onclick="confirmDeleteKey('${key.key}')">Delete</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Search keys
+        function searchKeys() {
+            loadKeys();
+        }
+
+        // View key details
+        async function viewKey(key) {
+            const database = parseInt(document.getElementById('key-database').value);
+            currentKey = key;
+            currentDatabase = database;
+
+            showLoading('Loading key details...');
+
+            try {
+                const response = await fetch(`${API_BASE}redis.php?action=get_key&key=${encodeURIComponent(key)}&db=${database}`);
+                const data = await response.json();
+
+                if (data.success) {
+                    showKeyDetails(data.data);
+                    openModal('key-modal');
+                } else {
+                    showError(data.message || 'Failed to load key');
+                }
+            } catch (error) {
+                console.error('Failed to load key:', error);
+                showError('An error occurred while loading key');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        // Show key details in modal
+        function showKeyDetails(keyData) {
+            document.getElementById('key-modal-title').textContent = `Key: ${keyData.key}`;
+
+            let html = `
+                <div class="form-group">
+                    <label class="form-label">Type</label>
+                    <div><span class="badge badge-primary">${keyData.type}</span></div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">TTL</label>
+                    <div>${keyData.metadata.ttl === -1 ? 'No expiry' : keyData.metadata.ttl + ' seconds'}</div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Value</label>
+                    <div style="background: var(--bg-tertiary); padding: 12px; border-radius: 8px; font-family: var(--font-mono); font-size: 0.875rem; max-height: 200px; overflow-y: auto; word-break: break-all;">
+                        ${JSON.stringify(keyData.value, null, 2)}
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('key-modal-body').innerHTML = html;
+        }
+
+        // Confirm delete key
+        function confirmDeleteKey(key) {
+            currentKey = key;
+            document.getElementById('delete-key-btn').onclick = () => deleteKey();
+            openModal('key-modal');
+        }
+
+        // Delete key
+        async function deleteKey() {
+            if (!currentKey) return;
+
+            showLoading('Deleting key...');
+
+            try {
+                const response = await fetch(`${API_BASE}redis.php?action=delete_key`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        keys: [currentKey],
+                        db: currentDatabase
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    showSuccess('Key deleted successfully');
+                    closeModal('key-modal');
+                    loadKeys();
+                } else {
+                    showError(data.message || 'Failed to delete key');
+                }
+            } catch (error) {
+                console.error('Failed to delete key:', error);
+                showError('An error occurred while deleting key');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        // Load slowlog
+        async function loadSlowlog() {
+            try {
+                const response = await fetch(API_BASE + 'redis.php?action=monitor');
+                const data = await response.json();
+
+                if (data.success) {
+                    renderSlowlog(data.data.commands || []);
+                }
+            } catch (error) {
+                console.error('Failed to load slowlog:', error);
+            }
+        }
+
+        // Render slowlog
+        function renderSlowlog(commands) {
+            const container = document.getElementById('slowlog-container');
+
+            if (commands.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center text-muted" style="padding: 20px;">
+                        No recent commands
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = commands.map(cmd => `
+                <div class="command-item">
+                    <span class="command-time">${new Date(cmd.timestamp * 1000).toLocaleTimeString()}</span>
+                    <span class="command-text">${cmd.command}</span>
+                    <span style="color: #f59e0b; margin-left: 12px;">${cmd.duration}ms</span>
+                </div>
+            `).join('');
+        }
+
+        // Flush database
+        function flushDatabase() {
+            document.getElementById('flush-message').textContent = 'Are you sure you want to flush the current database? All keys in DB ' + currentDatabase + ' will be deleted.';
+            document.getElementById('confirm-flush-btn').onclick = () => confirmFlushDB();
+            openModal('flush-modal');
+        }
+
+        // Confirm flush DB
+        async function confirmFlushDB() {
+            closeModal('flush-modal');
+            showLoading('Flushing database...');
+
+            try {
+                const response = await fetch(API_BASE + 'redis.php?action=flush_db', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ db: currentDatabase })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    showSuccess(`Database ${currentDatabase} flushed successfully`);
+                    loadKeys();
+                } else {
+                    showError(data.message || 'Failed to flush database');
+                }
+            } catch (error) {
+                console.error('Failed to flush database:', error);
+                showError('An error occurred while flushing database');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        // Flush all databases
+        function flushAll() {
+            document.getElementById('flush-message').textContent = 'Are you sure you want to flush ALL databases? This will delete ALL data in Redis!';
+            document.getElementById('confirm-flush-btn').onclick = () => confirmFlushAll();
+            openModal('flush-modal');
+        }
+
+        // Confirm flush all
+        async function confirmFlushAll() {
+            closeModal('flush-modal');
+            showLoading('Flushing all databases...');
+
+            try {
+                const response = await fetch(API_BASE + 'redis.php?action=flush&confirm=true', {
+                    method: 'POST'
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    showSuccess('All databases flushed successfully');
+                    loadKeys();
+                } else {
+                    showError(data.message || 'Failed to flush databases');
+                }
+            } catch (error) {
+                console.error('Failed to flush all:', error);
+                showError('An error occurred while flushing databases');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        // Modal helpers
+        function openModal(modalId) {
+            const modal = document.getElementById(modalId);
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal(modalId) {
+            const modal = document.getElementById(modalId);
+            modal.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        // Loading helpers
+        function showLoading(text = 'Processing...') {
+            document.getElementById('loading-text').textContent = text;
+            document.querySelector('.global-loading').style.display = 'block';
+        }
+
+        function hideLoading() {
+            document.querySelector('.global-loading').style.display = 'none';
+        }
+
+        // Alert helpers
+        function showSuccess(message) {
+            alert('✓ ' + message);
+        }
+
+        function showError(message) {
+            alert('✕ ' + message);
+        }
+    </script>
+</body>
+</html>

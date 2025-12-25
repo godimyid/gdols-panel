@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Database Management - GD Panel</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/database.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo">
+                <h2>GD Panel</h2</head></title></body></h2>>
+                <p>Database Management</p>
+            </div>
+            <nav class="nav">
+                <a href="index.html" class="nav-link">
+                    <span class="icon">📊</span>
+                    <span>Dashboard</span>
+                </a>
+                <a href="vhosts.html" class="nav-link">
+                    <span class="icon">🌐</span>
+                    <span>Virtual Hosts</span>
+                </a>
+                <a href="php-extensions.html" class="nav-link">
+                    <span class="icon">🔧</span>
+                    <span>PHP Extensions</span>
+                </a</p></span></span></span>>
+                <a href="database.html" class="nav-link active">
+                    <span class="icon">🗄️</span>
+                    <span>Database</span>
+                </a>
+                <a href="firewall.html" class="nav-link">
+                    <span class="icon">🔥</span>
+                    <span>Firewall</span>
+                </a>
+                <a href="redis.html" class="nav-link">
+                    <span class="icon">🔴</span>
+                    <span>Redis</span>
+                </a>
+                <a href="system.html" class="nav-link">
+                    <span class="icon"></span></span></span>💻</span>
+                    <span>System</span>
+                </a>
+                <a href="settings.html" class="nav-link">
+                    <span class="icon">⚙️</span>
+                    <span>Settings</span>
+                </a>
+            </nav>
+            <div class="user-info">
+                <div class="user-avatar">
+                    <img src="assets/images/user-avatar.svg" alt="User">
+                </div>
+                <div class="user-details">
+                    <p class="user-name" id="userName">Admin</p>
+                    <p class="user-role">Administrator</p>
+                </div></span></span>
+                <button class="logout-btn" id="logoutBtn">
+                    <span>Logout</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="header">
+                <div class="header-left">
+                    <h1>Database Management</h1>
+                    <p>Kelola database dan pengguna MariaDB</p>
+                </div>
+                <div class="header-right">
+                    <button class="btn btn-primary" id="createDbBtn">
+                        <span class="icon">➕</span>
+                        Create</span></h1> Database
+                    </button>
+                    <button class="btn btn-secondary" id="refreshBtn">
+                        <span class="icon">🔄</span>
+                        Refresh
+                    </button>
+                </div>
+            </header>
+
+            <!-- Tabs -->
+            <div class="tabs">
+                <button class="tab-btn active" data-tab="databases">Databases</button>
+                <button class="tab-btn" data-tab="users">Users</button>
+                <button class="tab-btn" data-tab="backups">Backups</button>
+                <button class="tab-btn" data-tab="import">Import/Export</button>
+            </div>
+
+            <!-- Databases Tab -->
+            <div class="tab-content active" id="databases-tab">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">🗄️</div>
+                        <div class="stat-info">
+                            <h3 id="totalDatabases">0</h3>
+                            <p>Total Databases</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">📊</div>
+                        <div class="stat-info">
+                            <h3 id="totalSize">0 MB</h3>
+                            <p>Total Size</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">📋</div>
+                        <div class="stat-info">
+                            <h3 id="totalTables">0</h3>
+                            <p>Total Tables</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="table-container">
+                    <div class="table-header">
+                        <h3>Database List</h3>
+                        <div class="search-box">
+                            <input type="text" placeholder="Search databases..."</h3> id="searchDatabase">
+                            <span class="search-icon">🔍</span>
+                        </div>
+                    </div>
+                    <div class="table-wrapper">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Database Name</th>
+                                    <th>Size</th>
+                                    <th>Tables</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="databaseList">
+                                <tr>
+                                    <td colspan="4" class="text-center">Loading...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div></thead></tr></th></th></th></th></tr>
+                </div>
+            </div>
+
+            <!-- Users Tab -->
+            <div class="tab-content" id="users-tab">
+                <div class="table-container">
+                    <div class="table-header">
+                        <h3>Database Users</h3>
+                        <button class="btn btn-primary" id="createUserBtn">
+                            <span class="icon">➕</span>
+                            Create User
+                        </button>
+                    </div>
+                    <div class="table-wrapper">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Username</th>
+                                    <th>Host</th></h3></thead></tr></th></th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="usersList">
+                                <tr>
+                                    <td colspan="3" class="text-center">Loading...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Backups Tab -->
+            <div class="tab-content" id="backups-tab">
+                <div class="table-container">
+                    <div class="table-header">
+                        <h3>Database Backups</h3>
+                        <button class="btn btn-primary" id="backupAll</tr></th></h3>Btn">
+                            <span class="icon">💾</span>
+                            Backup All
+                        </button>
+                    </div>
+                    <div class="table-wrapper">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Database</th>
+                                    <th>Backup File</th>
+                                    <th>Date</th>
+                                    <th>Size</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="backupsList">
+                                <tr>
+                                    <td colspan="5" class="text-center">No backups found</td>
+                                </tr>
+                            </tbody></thead></tr></th></th></th></th></tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Import/Export Tab -->
+            <div class="tab-content" id="import-tab">
+                <div class="import-export-container">
+                    <div class="import-section">
+                        <h3>Import Database</h3>
+                        <form id="importForm" class="form">
+                            <div class="form-group">
+                                <label for="importDatabase">Target Database</label>
+                                <select id="importDatabase" required>
+                                    <option value="">Select Database</option>
+                                </select>
+                            </div>
+                            <div class</h3></select>="form-group">
+                                <label for="sqlFile">SQL File</label>
+                                <input type="file" id="sqlFile" accept=".sql" required>
+                                <small>Upload .sql file to import</small>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Import Database</button>
+                        </form>
+                    </div>
+
+                    <div class="export-section">
+                        <h3>Export Database</h3>
+                        <form id="exportForm" class="form">
+                            <div class="form-group">
+                                <label for="exportDatabase">Database to Export</label></small></h3>
+                                <select id="exportDatabase" required>
+                                    <option value="">Select Database</option>
+                                </select>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Export Database</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal: Create Database -->
+    <div class="modal" id="createDbModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Create New Database</h3>
+                <button class="modal-close" id="closeCreate</select>DbModal">&times;</button>
+            </div>
+            <form id="createDbForm" class="form">
+                <div class="form-group">
+                    <label for="dbName">Database Name</label>
+                    <input type="text" id="dbName" name="name" required
+                           pattern="[a-zA-Z0-9_]+"
+                           title="Only letters, numbers, and underscores allowed">
+                    <small>Only letters, numbers, and underscores allowed</small>
+                </div>
+                <div class="form-group">
+                    <label for="dbCharset">Character Set</label>
+                    <select id="</small>dbCharset" name="charset">
+                        <option value="utf8mb4">utf8mb4 (Recommended)</option>
+                        <option value="utf8">utf8</option>
+                        <option value="latin1">latin1</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="dbCollation">Collation</label>
+                    <select id="dbCollation" name="collation">
+                        <option value="utf8mb4_unicode_ci">utf8mb4_unicode_ci (Recommended)</option>
+                        <option value="utf8mb4_general_ci">utf8mb4_general_ci</option>
+                        <option value="utf8_unicode_ci">utf8_unicode_ci</option>
+                        <option value="latin1_swedish_ci">latin1_swedish_ci</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" id="createUser" checked>
+                        Create user for this database
+                    </label>
+                </div>
+                <div class="form-group" id="userFields">
+                    <label for="dbUsername">Username</label>
+                    <input type="text" id="db</label>Username" name="username"
+                           pattern="[a-zA-Z0-9_]+">
+                </div>
+                <div class="form-group" id="passwordFields">
+                    <label for="dbPassword">Password</label>
+                    <input type="password" id="dbPassword" name="password" minlength="8">
+                    <small>Minimum 8 characters</small>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">Create Database</button>
+                    <button type="button" class="btn btn-secondary" id="cancelCreateDb">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal: Create User -->
+    <div class="modal" id="createUserModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Create Database User</h3>
+                <button class="modal-close" id="closeCreateUserModal">&times;</button>
+            </div>
+            <form id="createUserForm" class="form">
+                <div class="form-group">
+                    <label for="newUsername">Username</label>
+                    <input type="text" id="newUsername</small>" name="username" required
+                           pattern="[a-zA-Z0-9_]+"
+                           title="Only letters, numbers, and underscores allowed">
+                </div>
+                <div class="form-group">
+                    <label for="newPassword">Password</label>
+                    <input type="password" id="newPassword" name="password" required minlength="8">
+                </div>
+                <div class="form-group">
+                    <label for="userHost">Host</label>
+                    <select id="userHost" name="host">
+                        <option value="localhost">localhost</option>
+                        <option value="%">Any Host (%)</option>
+                        <option value="127.0.0.1">127.0.0.1</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="userDatabase">Grant Privileges on Database</label>
+                    <select id="userDatabase" name="database">
+                        <option value="">No Database</option>
+                    </select>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">Create User</button>
+                    <button type="button" class="btn btn-secondary" id="cancelCreateUser">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal: Delete Confirmation -->
+    <div class="modal" id="deleteModal">
+        <div class="modal-content modal-small">
+            <div class="modal-header">
+                <h3>Confirm Delete</h3>
+                <button class="modal-close" id="closeDeleteModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete <strong id="deleteTarget"></strong>?</p>
+                <p class</h3>="warning">This action cannot be undone!</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-danger" id="confirmDelete">Delete</button>
+                <button class="btn btn-secondary" id="cancelDelete">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast"></div>
+
+    <script src="assets/js/auth.js"></script>
+    <script src="assets/js/database.js"></script>
+</body>
+</html>
+</p>

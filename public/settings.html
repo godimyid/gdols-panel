@@ -1,0 +1,1475 @@
+```path/to/GD Panel/public/settings.html#L1-400
+<!doctype html>
+<html lang="id">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Settings - GD Panel</title>
+        <link rel="stylesheet" href="assets/css/style.css" />
+        <style>
+            .settings-nav {
+                display: flex;
+                gap: 8px;
+                margin-bottom: 24px;
+                border-bottom: 1px solid var(--border-color);
+                padding-bottom: 16px;
+                overflow-x: auto;
+            }
+
+            .settings-nav-item {
+                padding: 8px 16px;
+                background: var(--bg-secondary);
+                border: 1px solid var(--border-color);
+                border-radius: var(--spacing-sm);
+                color: var(--text-secondary);
+                cursor: pointer;
+                transition: all var(--transition-fast);
+                white-space: nowrap;
+                font-size: 0.875rem;
+            }
+
+            .settings-nav-item:hover {
+                background: var(--bg-hover);
+                color: var(--text-primary);
+            }
+
+            .settings-nav-item.active {
+                background: var(--primary-color);
+                border-color: var(--primary-color);
+                color: white;
+            }
+
+            .settings-section {
+                display: none;
+            }
+
+            .settings-section.active {
+                display: block;
+            }
+
+            .setting-group {
+                background: var(--bg-card);
+                border: 1px solid var(--border-color);
+                border-radius: var(--spacing-lg);
+                padding: var(--spacing-lg);
+                margin-bottom: var(--spacing-lg);
+            }
+
+            .setting-group-title {
+                font-size: 1.125rem;
+                font-weight: 600;
+                margin-bottom: var(--spacing-md);
+                padding-bottom: var(--spacing-md);
+                border-bottom: 1px solid var(--border-color);
+            }
+
+            .danger-zone {
+                background: rgba(239, 68, 68, 0.05);
+                border: 2px solid var(--danger-color);
+                border-radius: var(--spacing-lg);
+                padding: var(--spacing-xl);
+                margin-top: var(--spacing-2xl);
+            }
+
+            .backup-item {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: var(--spacing-md) 0;
+                border-bottom: 1px solid var(--border-color);
+            }
+
+            .backup-item:last-child {
+                border-bottom: none;
+            }
+
+            .backup-info {
+                flex: 1;
+            }
+
+            .backup-name {
+                font-weight: 500;
+                margin-bottom: 4px;
+            }
+
+            .backup-details {
+                font-size: 0.875rem;
+                color: var(--text-muted);
+            }
+
+            .backup-actions {
+                display: flex;
+                gap: 8px;
+            }
+
+            .log-entry {
+                font-family: var(--font-mono);
+                font-size: 0.75rem;
+                padding: 8px;
+                background: var(--bg-primary);
+                border: 1px solid var(--border-color);
+                border-radius: 4px;
+                margin-bottom: 8px;
+                max-height: 200px;
+                overflow-y: auto;
+            }
+
+            .two-factor-setup {
+                background: linear-gradient(
+                    135deg,
+                    var(--primary-color),
+                    var(--secondary-color)
+                );
+                color: white;
+                padding: var(--spacing-xl);
+                border-radius: var(--spacing-lg);
+                text-align: center;
+                margin-bottom: var(--spacing-xl);
+            }
+
+            .setup-steps {
+                display: flex;
+                justify-content: center;
+                gap: var(--spacing-md);
+                margin: var(--spacing-lg) 0;
+            }
+
+            .setup-step {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: var(--spacing-sm);
+            }
+
+            .step-number {
+                width: 40px;
+                height: 40px;
+                border-radius: 50%;
+                background: rgba(255, 255, 255, 0.2);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-weight: 600;
+            }
+
+            .step-number.active {
+                background: white;
+                color: var(--primary-color);
+            }
+
+            .api-key-display {
+                display: flex;
+                gap: var(--spacing-md);
+                align-items: center;
+                background: var(--bg-tertiary);
+                padding: var(--spacing-md);
+                border-radius: var(--spacing-md);
+                font-family: var(--font-mono);
+                font-size: 0.875rem;
+            }
+
+            .api-key-value {
+                flex: 1;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+        </style>
+    </head>
+    <body>
+        <!-- Header -->
+        <header class="header">
+            <div class="container">
+                <div class="header-content">
+                    <div class="header-left">
+                        <div class="header-logo">
+                            <span class="header-logo-icon">🚀</span>
+                            <div>
+                                <div>GD Panel</div>
+                                <div class="header-brand">by GoDiMyID</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="header-right">
+                        <div class="header-user">
+                            <div class="header-user-info">
+                                <div class="header-user-name">Admin</div>
+                                <div class="header-user-role">
+                                    Administrator
+                                </div>
+                            </div>
+                            <div class="header-user-avatar">A</div>
+                        </div>
+                        <div class="header-actions">
+                            <button
+                                class="btn btn-sm btn-outline"
+                                onclick="window.location.href = 'login.html'"
+                                data-action="logout"
+                            >
+                                <span>🚪</span> Logout
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Navigation -->
+        <nav class="nav">
+            <div class="container">
+                <div class="nav-content">
+                    <a class="nav-item" data-page="dashboard" href="index.html">
+                        <span class="nav-item-icon">📊</span>
+                        <span class="nav-item-text">Dashboard</span>
+                    </a>
+                    <a class="nav-item" data-page="vhosts" href="vhosts.html">
+                        <span class="nav-item-icon">🌐</span>
+                        <span class="nav-item-text">Virtual Hosts</span>
+                    </a>
+                    <a
+                        class="nav-item"
+                        data-page="php-extensions"
+                        href="php-extensions.html"
+                    >
+                        <span class="nav-item-icon">🔧</span>
+                        <span class="nav-item-text">PHP Extensions</span>
+                    </a>
+                    <a
+                        class="nav-item"
+                        data-page="firewall"
+                        href="firewall.html"
+                    >
+                        <span class="nav-item-icon">🔥</span>
+                        <span class="nav-item-text">Firewall</span>
+                    </a>
+                    <a class="nav-item" data-page="redis" href="redis.html">
+                        <span class="nav-item-icon">🔴</span>
+                        <span class="nav-item-text">Redis</span>
+                    </a>
+                    <a
+                        class="nav-item active"
+                        data-page="system"
+                        href="system.html"
+                    >
+                        <span class="nav-item-icon">⚙️</span>
+                        <span class="nav-item-text">Settings</span>
+                    </a>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main">
+            <div class="container">
+                <div class="main-content">
+                    <div class="content">
+                        <div class="content-header">
+                            <div>
+                                <h1 class="content-title">Settings</h1>
+                                <p class="content-subtitle">
+                                    Panel configuration and preferences
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Settings Navigation -->
+                        <div class="settings-nav">
+                            <button
+                                class="settings-nav-item active"
+                                onclick="showSection('general')"
+                            >
+                                General
+                            </button>
+                            <button
+                                class="settings-nav-item"
+                                onclick="showSection('security')"
+                            >
+                                Security
+                            </button>
+                            <button
+                                class="settings-nav-item"
+                                onclick="showSection('backup')"
+                            >
+                                Backup
+                            </button>
+                            <button
+                                class="settings-nav-item"
+                                onclick="showSection('api')"
+                            >
+                                API Keys
+                            </button>
+                            <button
+                                class="settings-nav-item"
+                                onclick="showSection('logs')"
+                            >
+                                Logs
+                            </button>
+                            <button
+                                class="settings-nav-item"
+                                onclick="showSection('about')"
+                            >
+                                About
+                            </button>
+                        </div>
+
+                        <!-- General Settings -->
+                        <div
+                            id="section-general"
+                            class="settings-section active"
+                        >
+                            <div class="setting-group">
+                                <div class="setting-group-title">
+                                    Panel Information
+                                </div>
+                                <form id="general-form">
+                                    <div class="form-group">
+                                        <label class="form-label"
+                                            >Panel Title</label
+                                        >
+                                        <input
+                                            type="text"
+                                            name="panel_title"
+                                            class="form-input"
+                                            value="GD Panel"
+                                        />
+                                        <div class="form-help">
+                                            Name displayed in the header and
+                                            page titles
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label"
+                                            >Panel Language</label
+                                        >
+                                        <select
+                                            name="panel_language"
+                                            class="form-select"
+                                        >
+                                            <option value="id_ID">
+                                                Bahasa Indonesia
+                                            </option>
+                                            <option value="en_US">
+                                                English (US)
+                                            </option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label"
+                                            >Timezone</label
+                                        >
+                                        <select
+                                            name="timezone"
+                                            class="form-select"
+                                        >
+                                            <option value="Asia/Jakarta">
+                                                Asia/Jakarta (UTC+7)
+                                            </option>
+                                            <option value="Asia/Makassar">
+                                                Asia/Makassar (UTC+8)
+                                            </option>
+                                            <option value="Asia/Bali">
+                                                Asia/Bali (UTC+8)
+                                            </option>
+                                            <option value="UTC">
+                                                UTC (UTC+0)
+                                            </option>
+                                        </select>
+                                    </div>
+                                    <div class="form-actions">
+                                        <button
+                                            class="btn btn-primary"
+                                            onclick="saveGeneralSettings()"
+                                        >
+                                            Save Changes
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+
+                            <div class="setting-group">
+                                <div class="setting-group-title">
+                                    System Preferences
+                                </div>
+                                <form id="preferences-form">
+                                    <div class="form-group">
+                                        <label class="form-label"
+                                            >Items Per Page</label
+                                        >
+                                        <input
+                                            type="number"
+                                            name="items_per_page"
+                                            class="form-input"
+                                            value="20"
+                                            min="10"
+                                            max="100"
+                                        />
+                                        <div class="form-help">
+                                            Number of items displayed per page
+                                            in lists
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label"
+                                            >Date Format</label
+                                        >
+                                        <select
+                                            name="date_format"
+                                            class="form-select"
+                                        >
+                                            <option value="Y-m-d H:i:s">
+                                                YYYY-MM-DD HH:MM:SS
+                                            </option>
+                                            <option value="d/m/Y H:i:s">
+                                                DD/MM/YYYY HH:MM:SS
+                                            </option>
+                                            <option value="m/d/Y H:i:s">
+                                                MM/DD/YYYY HH:MM:SS
+                                            </option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-checkbox">
+                                            <input
+                                                type="checkbox"
+                                                name="auto_refresh"
+                                                value="1"
+                                            />
+                                            Enable Auto-Refresh
+                                        </label>
+                                        <div class="form-help">
+                                            Automatically refresh dashboard data
+                                            every 30 seconds
+                                        </div>
+                                    </div>
+                                    <div class="form-actions">
+                                        <button
+                                            class="btn btn-primary"
+                                            onclick="savePreferences()"
+                                        >
+                                            Save Preferences
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+
+                        <!-- Security Settings -->
+                        <div id="section-security" class="settings-section">
+                            <div class="setting-group">
+                                <div class="setting-group-title">
+                                    Change Password
+                                </div>
+                                <form id="password-form">
+                                    <div class="form-group">
+                                        <label class="form-label required"
+                                            >Current Password</label
+                                        >
+                                        <input
+                                            type="password"
+                                            name="current_password"
+                                            class="form-input"
+                                            required
+                                        />
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label required"
+                                            >New Password</label
+                                        >
+                                        <input
+                                            type="password"
+                                            name="new_password"
+                                            class="form-input"
+                                            required
+                                            minlength="8"
+                                        />
+                                        <div class="form-help">
+                                            Minimum 8 characters, must include
+                                            uppercase, lowercase, and number
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label required"
+                                            >Confirm New Password</label
+                                        >
+                                        <input
+                                            type="password"
+                                            name="confirm_password"
+                                            class="form-input"
+                                            required
+                                            minlength="8"
+                                        />
+                                    </div>
+                                    <div class="form-actions">
+                                        <button
+                                            class="btn btn-primary"
+                                            onclick="changePassword()"
+                                        >
+                                            Change Password
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+
+                            <div class="setting-group">
+                                <div class="setting-group-title">
+                                    Session Settings
+                                </div>
+                                <form id="session-form">
+                                    <div class="form-group">
+                                        <label class="form-label"
+                                            >Session Lifetime</label
+                                        >
+                                        <input
+                                            type="number"
+                                            name="session_lifetime"
+                                            class="form-input"
+                                            value="7200"
+                                            min="300"
+                                            max="86400"
+                                        />
+                                        <div class="form-help">
+                                            How long a user stays logged in (in
+                                            seconds)
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label"
+                                            >Max Login Attempts</label
+                                        >
+                                        <input
+                                            type="number"
+                                            name="max_attempts"
+                                            class="form-input"
+                                            value="5"
+                                            min="3"
+                                            max="10"
+                                        />
+                                        <div class="form-help">
+                                            Maximum failed login attempts before
+                                            account lockout
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label"
+                                            >Lockout Duration</label
+                                        >
+                                        <input
+                                            type="number"
+                                            name="lockout_duration"
+                                            class="form-input"
+                                            value="900"
+                                            min="60"
+                                            max="3600"
+                                        />
+                                        <div class="form-help">
+                                            How long to lock account after too
+                                            many failed attempts (in seconds)
+                                        </div>
+                                    </div>
+                                    <div class="form-actions">
+                                        <button
+                                            class="btn btn-primary"
+                                            onclick="saveSessionSettings()"
+                                        >
+                                            Save Security Settings
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+
+                            <div class="setting-group">
+                                <div class="setting-group-title">
+                                    Two-Factor Authentication (Coming Soon)
+                                </div>
+                                <div class="two-factor-setup">
+                                    <div
+                                        style="
+                                            font-size: 1.25rem;
+                                            font-weight: 600;
+                                            margin-bottom: 8px;
+                                        "
+                                    >
+                                        🔐 Two-Factor Authentication
+                                    </div>
+                                    <p
+                                        style="
+                                            opacity: 0.9;
+                                            margin-bottom: 16px;
+                                        "
+                                    >
+                                        Add an extra layer of security to your
+                                        account
+                                    </p>
+                                    <div class="setup-steps">
+                                        <div class="setup-step">
+                                            <div class="step-number">1</div>
+                                            <div>Scan QR</div>
+                                        </div>
+                                        <div class="setup-step">
+                                            <div class="step-number">2</div>
+                                            <div>Enter Code</div>
+                                        </div>
+                                        <div class="setup-step">
+                                            <div class="step-number">3</div>
+                                            <div>Enabled</div>
+                                        </div>
+                                    </div>
+                                    <div style="margin-top: 16px">
+                                        <button
+                                            class="btn btn-secondary"
+                                            disabled
+                                        >
+                                            Enable 2FA (Coming Soon)
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Backup Settings -->
+                        <div id="section-backup" class="settings-section">
+                            <div class="setting-group">
+                                <div class="setting-group-title">
+                                    Automated Backups
+                                </div>
+                                <form id="backup-form">
+                                    <div class="form-checkbox">
+                                        <input
+                                            type="checkbox"
+                                            name="enable_backup"
+                                            value="1"
+                                        />
+                                        <label>Enable Automated Backups</label>
+                                    </div>
+                                    <div class="form-help">
+                                        Automatically backup panel data and
+                                        configurations
+                                    </div>
+
+                                    <div style="margin-top: 16px">
+                                        <label class="form-label"
+                                            >Backup Schedule</label
+                                        >
+                                        <select
+                                            name="backup_schedule"
+                                            class="form-select"
+                                        >
+                                            <option value="daily">Daily</option>
+                                            <option value="weekly">
+                                                Weekly
+                                            </option>
+                                            <option value="monthly">
+                                                Monthly
+                                            </option>
+                                        </select>
+                                    </div>
+
+                                    <div style="margin-top: 16px">
+                                        <label class="form-label"
+                                            >Retention Period</label
+                                        >
+                                        <input
+                                            type="number"
+                                            name="retention_days"
+                                            class="form-input"
+                                            value="30"
+                                            min="7"
+                                            max="90"
+                                        />
+                                        <div class="form-help">
+                                            How many days to keep backups (7-90
+                                            days)
+                                        </div>
+                                    </div>
+
+                                    <div
+                                        class="form-group"
+                                        style="margin-top: 16px"
+                                    >
+                                        <label class="form-checkbox">
+                                            <input
+                                                type="checkbox"
+                                                name="backup_database"
+                                                value="1"
+                                                checked
+                                            />
+                                            <label>Include Database</label>
+                                        </label>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label class="form-checkbox">
+                                            <input
+                                                type="checkbox"
+                                                name="backup_config"
+                                                value="1"
+                                                checked
+                                            />
+                                            <label
+                                                >Include Configuration
+                                                Files</label
+                                            >
+                                        </label>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label class="form-checkbox">
+                                            <input
+                                                type="checkbox"
+                                                name="backup_vhosts"
+                                                value="1"
+                                                checked
+                                            />
+                                            <label>Include Virtual Hosts</label>
+                                        </label>
+                                    </div>
+
+                                    <div
+                                        class="form-actions"
+                                        style="margin-top: 16px"
+                                    >
+                                        <button
+                                            class="btn btn-primary"
+                                            onclick="saveBackupSettings()"
+                                        >
+                                            Save Backup Settings
+                                        </button>
+                                        <button
+                                            class="btn btn-success"
+                                            onclick="createBackup()"
+                                        >
+                                            Create Backup Now
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+
+                            <div class="setting-group">
+                                <div class="setting-group-title">
+                                    Recent Backups
+                                </div>
+                                <div id="backups-list">
+                                    <div
+                                        class="text-center text-muted"
+                                        style="padding: 40px"
+                                    >
+                                        Loading...
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- API Keys -->
+                        <div id="section-api" class="settings-section">
+                            <div class="setting-group">
+                                <div class="setting-group-title">API Keys</div>
+                                <p
+                                    style="
+                                        color: var(--text-muted);
+                                        margin-bottom: 16px;
+                                    "
+                                >
+                                    Generate API keys to access GD Panel
+                                    programmatically. Keep these keys secure!
+                                </p>
+
+                                <div
+                                    class="form-actions"
+                                    style="margin-bottom: 24px"
+                                >
+                                    <button
+                                        class="btn btn-primary"
+                                        onclick="generateAPIKey()"
+                                    >
+                                        + Generate New API Key
+                                    </button>
+                                </div>
+
+                                <div id="api-keys-list">
+                                    <div
+                                        class="text-center text-muted"
+                                        style="padding: 40px"
+                                    >
+                                        No API keys generated yet
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="setting-group">
+                                <div class="setting-group-title">
+                                    API Documentation
+                                </div>
+                                <div
+                                    style="
+                                        background: var(--bg-secondary);
+                                        padding: 16px;
+                                        border-radius: 8px;
+                                        border: 1px solid var(--border-color);
+                                    "
+                                >
+                                    <p style="margin-bottom: 12px">
+                                        Use API keys to access GD Panel
+                                        programmatically:
+                                    </p>
+                                    <div class="log-entry">
+                                        curl -X GET
+                                        https://your-panel.com/api/dashboard \
+                                        -H "Authorization: Bearer YOUR_API_KEY"
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Logs -->
+                        <div id="section-logs" class="settings-section">
+                            <div class="setting-group">
+                                <div class="setting-group-title">
+                                    System Logs
+                                </div>
+                                <div style="margin-bottom: 16px">
+                                    <select
+                                        id="log-filter"
+                                        class="form-select"
+                                        onchange="loadLogs()"
+                                        style="width: 200px; margin-right: 8px"
+                                    >
+                                        <option value="all">All Logs</option>
+                                        <option value="error">
+                                            Errors Only
+                                        </option>
+                                        <option value="warning">
+                                            Warnings Only
+                                        </option>
+                                    </select>
+                                    <button
+                                        class="btn btn-outline"
+                                        onclick="loadLogs()"
+                                    >
+                                        Refresh
+                                    </button>
+                                    <button
+                                        class="btn btn-outline"
+                                        onclick="clearLogs()"
+                                    >
+                                        Clear Old Logs
+                                    </button>
+                                </div>
+                                <div
+                                    id="logs-container"
+                                    style="max-height: 400px; overflow-y: auto"
+                                >
+                                    <div
+                                        class="text-center text-muted"
+                                        style="padding: 40px"
+                                    >
+                                        Loading logs...
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- About -->
+                        <div id="section-about" class="settings-section">
+                            <div class="setting-group">
+                                <div class="setting-group-title">
+                                    About GD Panel
+                                </div>
+                                <div
+                                    style="
+                                        text-align: center;
+                                        padding: 40px 20px;
+                                    "
+                                >
+                                    <div
+                                        style="
+                                            font-size: 4rem;
+                                            margin-bottom: 16px;
+                                        "
+                                    >
+                                        🚀
+                                    </div>
+                                    <h2
+                                        style="
+                                            font-size: 1.75rem;
+                                            font-weight: 700;
+                                            margin-bottom: 8px;
+                                        "
+                                    >
+                                        GD Panel
+                                    </h2>
+                                    <p
+                                        style="
+                                            color: var(--text-muted);
+                                            margin-bottom: 8px;
+                                        "
+                                    >
+                                        Version 1.0.0
+                                    </p>
+                                    <p
+                                        style="
+                                            color: var(--text-muted);
+                                            margin-bottom: 24px;
+                                        "
+                                    >
+                                        OpenLiteSpeed Management Panel
+                                    </p>
+                                    <div
+                                        style="
+                                            background: var(--bg-secondary);
+                                            padding: 16px;
+                                            border-radius: 8px;
+                                            display: inline-block;
+                                        "
+                                    >
+                                        <div
+                                            style="
+                                                font-weight: 600;
+                                                margin-bottom: 8px;
+                                            "
+                                        >
+                                            Created by
+                                        </div>
+                                        <div
+                                            style="
+                                                font-size: 1.125rem;
+                                                color: var(--primary-color);
+                                            "
+                                        >
+                                            GoDiMyID
+                                        </div>
+                                        <div style="margin-top: 8px">
+                                            <a
+                                                href="https://godi.my.id"
+                                                target="_blank"
+                                                style="
+                                                    color: var(--primary-color);
+                                                "
+                                                >godi.my.id</a
+                                            >
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="setting-group">
+                                <div class="setting-group-title">
+                                    Support & Resources
+                                </div>
+                                <div
+                                    style="
+                                        display: grid;
+                                        grid-template-columns: repeat(
+                                            auto-fit,
+                                            minmax(200px, 1fr)
+                                        );
+                                        gap: 16px;
+                                    "
+                                >
+                                    <a
+                                        href="https://godi.my.id"
+                                        target="_blank"
+                                        class="btn btn-outline"
+                                        style="
+                                            justify-content: flex-start;
+                                            height: auto;
+                                            padding: 16px;
+                                        "
+                                    >
+                                        <div>
+                                            <div style="font-weight: 600">
+                                                📖 Documentation
+                                            </div>
+                                            <div
+                                                style="
+                                                    font-size: 0.875rem;
+                                                    color: var(--text-muted);
+                                                "
+                                            >
+                                                Official docs & guides
+                                            </div>
+                                        </div>
+                                    </a>
+                                    <a
+                                        href="https://github.com/godimyid/gd-panel"
+                                        target="_blank"
+                                        class="btn btn-outline"
+                                        style="
+                                            justify-content: flex-start;
+                                            height: auto;
+                                            padding: 16px;
+                                        "
+                                    >
+                                        <div>
+                                            <div style="font-weight: 600">
+                                                💻 GitHub
+                                            </div>
+                                            <div
+                                                style="
+                                                    font-size: 0.875rem;
+                                                    color: var(--text-muted);
+                                                "
+                                            >
+                                                Source code & issues
+                                            </div>
+                                        </div>
+                                    </a>
+                                    <a
+                                        href="https://godi.my.id/contact"
+                                        target="_blank"
+                                        class="btn btn-outline"
+                                        style="
+                                            justify-content: flex-start;
+                                            height: auto;
+                                            padding: 16px;
+                                        "
+                                    >
+                                        <div>
+                                            <div style="font-weight: 600">
+                                                📧 Support
+                                            </div>
+                                            <div
+                                                style="
+                                                    font-size: 0.875rem;
+                                                    color: var(--text-muted);
+                                                "
+                                            >
+                                                Get help & contact
+                                            </div>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+
+                            <div class="setting-group">
+                                <div class="setting-group-title">License</div>
+                                <div
+                                    style="
+                                        background: var(--bg-secondary);
+                                        padding: 16px;
+                                        border-radius: 8px;
+                                        border: 1px solid var(--border-color);
+                                        font-size: 0.875rem;
+                                    "
+                                >
+                                    <p style="margin-bottom: 8px">
+                                        GD Panel is open-source software
+                                        licensed under the MIT License.
+                                    </p>
+                                    <p style="color: var(--text-muted)">
+                                        © 2024 GoDiMyID. All rights reserved.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Danger Zone -->
+                        <div class="danger-zone">
+                            <h3
+                                style="
+                                    color: var(--danger-color);
+                                    margin-bottom: 16px;
+                                "
+                            >
+                                ⚠️ Danger Zone
+                            </h3>
+                            <p
+                                style="
+                                    color: var(--text-muted);
+                                    margin-bottom: 24px;
+                                "
+                            >
+                                These actions are irreversible. Please be
+                                careful.
+                            </p>
+
+                            <div
+                                style="
+                                    display: flex;
+                                    gap: 16px;
+                                    flex-wrap: wrap;
+                                "
+                            >
+                                <button
+                                    class="btn btn-warning"
+                                    onclick="exportData()"
+                                >
+                                    <span>📤</span> Export All Data
+                                </button>
+                                <button
+                                    class="btn btn-danger"
+                                    onclick="resetSettings()"
+                                >
+                                    <span>🔄</span> Reset All Settings
+                                </button>
+                                <button
+                                    class="btn btn-danger"
+                                    onclick="uninstallPanel()"
+                                >
+                                    <span>🗑️</span> Uninstall Panel
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="container">
+                <div class="footer-bottom">
+                    <p>
+                        &copy; 2024 GD Panel by GoDiMyID. All rights reserved.
+                    </p>
+                </div>
+            </div>
+        </footer>
+
+        <!-- Loading Overlay -->
+        <div class="global-loading" style="display: none">
+            <div
+                style="
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    background: rgba(0, 0, 0, 0.7);
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    z-index: 10000;
+                "
+            >
+                <div style="text-align: center; color: white">
+                    <div
+                        class="loading-spinner"
+                        style="
+                            width: 50px;
+                            height: 50px;
+                            border-width: 4px;
+                            margin: 0 auto 16px;
+                        "
+                    ></div>
+                    <p id="loading-text">Processing...</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Scripts -->
+        <script src="assets/js/app.js"></script>
+        <script>
+            // Show settings section
+            function showSection(section) {
+                // Update navigation
+                document
+                    .querySelectorAll(".settings-nav-item")
+                    .forEach((item) => {
+                        item.classList.remove("active");
+                        if (item.textContent.toLowerCase().includes(section)) {
+                            item.classList.add("active");
+                        }
+                    });
+
+                // Show section
+                document
+                    .querySelectorAll(".settings-section")
+                    .forEach((sec) => {
+                        sec.classList.remove("active");
+                    });
+                document
+                    .getElementById("section-" + section)
+                    .classList.add("active");
+            }
+
+            // Save general settings
+            function saveGeneralSettings() {
+                showLoading("Saving general settings...");
+                setTimeout(() => {
+                    hideLoading();
+                    showSuccess("General settings saved successfully");
+                }, 1000);
+            }
+
+            // Save preferences
+            function savePreferences() {
+                showLoading("Saving preferences...");
+                setTimeout(() => {
+                    hideLoading();
+                    showSuccess("Preferences saved successfully");
+                }, 1000);
+            }
+
+            // Change password
+            function changePassword() {
+                const form = document.getElementById("password-form");
+                const formData = new FormData(form);
+                const current = formData.get("current_password");
+                const newPass = formData.get("new_password");
+                const confirm = formData.get("confirm_password");
+
+                if (newPass !== confirm) {
+                    showError("Passwords do not match");
+                    return;
+                }
+
+                if (newPass.length < 8) {
+                    showError("Password must be at least 8 characters");
+                    return;
+                }
+
+                showLoading("Changing password...");
+
+                setTimeout(() => {
+                    form.reset();
+                    hideLoading();
+                    showSuccess("Password changed successfully");
+                }, 1000);
+            }
+
+            // Save session settings
+            function saveSessionSettings() {
+                showLoading("Saving security settings...");
+                setTimeout(() => {
+                    hideLoading();
+                    showSuccess("Security settings saved successfully");
+                }, 1000);
+            }
+
+            // Save backup settings
+            function saveBackupSettings() {
+                showLoading("Saving backup settings...");
+                setTimeout(() => {
+                    hideLoading();
+                    showSuccess("Backup settings saved successfully");
+                    loadBackups();
+                }, 1000);
+            }
+
+            // Create backup
+            function createBackup() {
+                if (!confirm("Create a full backup now?")) {
+                    return;
+                }
+
+                showLoading("Creating backup...");
+
+                setTimeout(() => {
+                    hideLoading();
+                    showSuccess("Backup created successfully");
+                    loadBackups();
+                }, 2000);
+            }
+
+            // Load backups
+            function loadBackups() {
+                const container = document.getElementById("backups-list");
+
+                // Mock data for demo
+                container.innerHTML = `
+                <div class="backup-item">
+                    <div class="backup-info">
+                        <div class="backup-name">Full Backup - Daily Schedule</div>
+                        <div class="backup-details">Created: 2024-01-15 02:00:00 | Size: 125 MB | Type: Full</div>
+                    </div>
+                    <div class="backup-actions">
+                        <button class="btn btn-sm btn-outline">Restore</button>
+                        <button class="btn btn-sm btn-danger">Delete</button>
+                    </div>
+                </div>
+            `;
+            }
+
+            // Generate API key
+            function generateAPIKey() {
+                showLoading("Generating API key...");
+
+                setTimeout(() => {
+                    const apiKey =
+                        "gdpanel_" +
+                        Math.random().toString(36).substring(2, 15) +
+                        Math.random().toString(36).substring(2, 15);
+
+                    const container = document.getElementById("api-keys-list");
+                    container.innerHTML = `
+                    <div class="api-key-display">
+                        <div class="api-key-value">${apiKey}</div>
+                        <button class="btn btn-sm btn-outline" onclick="copyAPIKey('${apiKey}')">📋 Copy</button>
+                        <button class="btn btn-sm btn-danger" onclick="deleteAPIKey('${apiKey}')">Delete</button>
+                    </div>
+                `;
+
+                    hideLoading();
+                    showSuccess("API key generated successfully");
+                }, 1000);
+            }
+
+            // Copy API key
+            function copyAPIKey(key) {
+                navigator.clipboard.writeText(key);
+                showSuccess("API key copied to clipboard");
+            }
+
+            // Delete API key
+            function deleteAPIKey(key) {
+                if (!confirm("Delete this API key?")) {
+                    return;
+                }
+                showLoading("Deleting API key...");
+                setTimeout(() => {
+                    hideLoading();
+                    showSuccess("API key deleted successfully");
+                    document.getElementById("api-keys-list").innerHTML = `
+                    <div class="text-center text-muted" style="padding: 40px;">
+                        No API keys generated yet
+                    </div>
+                `;
+                }, 500);
+            }
+
+            // Load logs
+            function loadLogs() {
+                const container = document.getElementById("logs-container");
+                const filter = document.getElementById("log-filter").value;
+
+                // Mock log data
+                const mockLogs = [
+                    {
+                        time: "2024-01-15 10:30:00",
+                        level: "info",
+                        message: "User admin logged in from 192.168.1.100",
+                    },
+                    {
+                        time: "2024-01-15 10:25:00",
+                        level: "success",
+                        message:
+                            "Virtual host created successfully: yourdomain.com",
+                    },
+                    {
+                        time: "2024-01-15 10:20:00",
+                        level: "warning",
+                        message: "High memory usage detected: 85%",
+                    },
+                    {
+                        time: "2024-01-15 10:15:00",
+                        level: "error",
+                        message: "Failed to connect to Redis",
+                    },
+                ];
+
+                container.innerHTML = mockLogs
+                    .map(
+                        (log) => `
+                <div class="log-entry">
+                    <span style="color: ${getLogColor(log.level)}">[${log.level.toUpperCase()}]</span>
+                    <span style="color: var(--text-muted);">${log.time}</span>
+                    <span>${log.message}</span>
+                </div>
+            `,
+                    )
+                    .join("");
+            }
+
+            function getLogColor(level) {
+                const colors = {
+                    info: "#3b82f6",
+                    success: "#10b981",
+                    warning: "#f59e0b",
+                    error: "#ef4444",
+                };
+                return colors[level] || "#6b7280";
+            }
+
+            // Clear logs
+            function clearLogs() {
+                if (!confirm("Clear all system logs older than 30 days?")) {
+                    return;
+                }
+
+                showLoading("Clearing logs...");
+
+                setTimeout(() => {
+                    hideLoading();
+                    showSuccess("Old logs cleared successfully");
+                    loadLogs();
+                }, 1000);
+            }
+
+            // Export data
+            function exportData() {
+                showLoading("Exporting data...");
+
+                setTimeout(() => {
+                    hideLoading();
+                    showSuccess("All data exported successfully");
+                }, 2000);
+            }
+
+            // Reset settings
+            function resetSettings() {
+                if (
+                    !confirm(
+                        "Reset all settings to default? This cannot be undone!",
+                    )
+                ) {
+                    return;
+                }
+
+                showLoading("Resetting settings...");
+
+                setTimeout(() => {
+                    hideLoading();
+                    showSuccess("All settings reset to default");
+                }, 1000);
+            }
+
+            // Uninstall panel
+            function uninstallPanel() {
+                const confirmation = prompt(
+                    'This will DELETE GD Panel and all its data. Type "DELETE" to confirm:',
+                );
+
+                if (confirmation !== "DELETE") {
+                    showError("Uninstall cancelled");
+                    return;
+                }
+
+                showLoading("Uninstalling GD Panel...");
+
+                setTimeout(() => {
+                    hideLoading();
+                    alert(
+                        "GD Panel has been uninstalled. Redirecting to installer...",
+                    );
+                    window.location.href = "../install.php";
+                }, 2000);
+            }
+
+            // Loading helpers
+            function showLoading(text = "Processing...") {
+                document.getElementById("loading-text").textContent = text;
+                document.querySelector(".global-loading").style.display =
+                    "block";
+            }
+
+            function hideLoading() {
+                document.querySelector(".global-loading").style.display =
+                    "none";
+            }
+
+            // Alert helpers
+            function showSuccess(message) {
+                alert("✓ " + message);
+            }
+
+            function showError(message) {
+                alert("✕ " + message);
+            }
+
+            // Load logs on page load
+            document.addEventListener("DOMContentLoaded", () => {
+                loadLogs();
+                loadBackups();
+            });
+        </script>
+    </body>
+</html>
