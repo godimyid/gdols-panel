@@ -7,7 +7,7 @@
 # License: MIT
 ##############################################################################
 
-set -e
+# set -e  # Disabled to prevent script from exiting on minor errors
 
 # Color codes for output
 RED='\033[0;31m'
@@ -190,11 +190,21 @@ install_php() {
 
     print_info "Adding PHP repository..."
     export DEBIAN_FRONTEND=noninteractive
-    add-apt-repository ppa:ondrej/php -y
-    apt-get update -qq
+    add-apt-repository ppa:ondrej/php -y || {
+        print_error "Failed to add PHP repository"
+        print_info "Trying manual repository setup..."
+        # Add PPA manually
+        echo "deb http://ppa.launchpad.net/ondrej/php/ubuntu noble main" > /etc/apt/sources.list.d/ondrej-ubuntu-php.list
+        apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 4F4EA0AAE5267A6C || true
+        apt-get update -qq
+    }
+    apt-get update -qq || {
+        print_error "Failed to update package list"
+        return 1
+    }
 
     print_info "Installing PHP 8.3 and extensions..."
-    apt-get install -y \
+    if ! apt-get install -y \
         php8.3 \
         php8.3-fpm \
         php8.3-mysql \
@@ -207,7 +217,10 @@ install_php() {
         php8.3-bcmath \
         php8.3-intl \
         php8.3-json \
-        php8.3-cli; then
+        php8.3-cli
+    then
+        print_success "PHP 8.3 installed successfully"
+    else
         print_error "Failed to install PHP 8.3"
         print_info "Trying alternative installation method..."
 
@@ -220,11 +233,11 @@ install_php() {
             print_info "  sudo add-apt-repository ppa:ondrej/php -y"
             print_info "  sudo apt update"
             print_info "  sudo apt install php8.3 php8.3-mysql php8.3-redis php8.3-curl php8.3-gd php8.3-mbstring php8.3-xml php8.3-zip"
-            exit 1
+            return 1
+        else
+            print_success "PHP installed (alternative method)"
         fi
     fi
-
-    print_success "PHP 8.3 installed successfully"
 }
 
 install_mariadb() {
