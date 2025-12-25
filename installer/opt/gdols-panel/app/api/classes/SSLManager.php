@@ -8,26 +8,29 @@
  */
 
 // Prevent direct access
-if (!defined('GDOLS_PANEL_ACCESS')) {
-    die('Direct access not permitted');
+if (!defined("GDOLS_PANEL_ACCESS")) {
+    die("Direct access not permitted");
 }
 
-class SSLManager {
+class SSLManager
+{
     private static $instance = null;
     private $conn;
     private $logger;
     private $system;
-    private $certbotPath = '/usr/bin/certbot';
-    private $configPath = '/etc/letsencrypt';
+    private $certbotPath = "/usr/bin/certbot";
+    private $configPath = "/etc/letsencrypt";
 
-    public function __construct() {
+    public function __construct()
+    {
         $db = Database::getInstance();
         $this->conn = $db->getConnection();
         $this->logger = Logger::getInstance();
         $this->system = System::getInstance();
     }
 
-    public static function getInstance() {
+    public static function getInstance()
+    {
         if (self::$instance === null) {
             self::$instance = new self();
         }
@@ -42,72 +45,79 @@ class SSLManager {
      * @param bool $force Force reinstall even if certificate exists
      * @return array Result with success status and message
      */
-    public function installSSLCertificate($domain, $email, $force = false) {
+    public function installSSLCertificate($domain, $email, $force = false)
+    {
         // Validate domain
         if (!$this->validateDomain($domain)) {
             return [
-                'success' => false,
-                'message' => 'Invalid domain format'
+                "success" => false,
+                "message" => "Invalid domain format",
             ];
         }
 
         // Validate email
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
             return [
-                'success' => false,
-                'message' => 'Invalid email format'
+                "success" => false,
+                "message" => "Invalid email format",
             ];
         }
 
         // Check if certificate already exists
         if (!$force && $this->certificateExists($domain)) {
             return [
-                'success' => false,
-                'message' => 'SSL certificate already exists for this domain. Use force=true to reinstall.'
+                "success" => false,
+                "message" =>
+                    "SSL certificate already exists for this domain. Use force=true to reinstall.",
             ];
         }
 
         // Check if Certbot is installed
         if (!$this->isCertbotInstalled()) {
             $result = $this->installCertbot();
-            if (!$result['success']) {
+            if (!$result["success"]) {
                 return $result;
             }
         }
 
         // Stop OpenLiteSpeed temporarily
-        $this->system->manageOLS('stop');
+        $this->system->manageOLS("stop");
 
         // Request certificate from Let's Encrypt
         $command = sprintf(
-            '%s certonly --standalone --non-interactive --agree-tos --email %s -d %s --force-renewal',
+            "%s certonly --standalone --non-interactive --agree-tos --email %s -d %s --force-renewal",
             $this->certbotPath,
             escapeshellarg($email),
-            escapeshellarg($domain)
+            escapeshellarg($domain),
         );
 
         $result = $this->system->executeCommand($command, true);
 
         // Start OpenLiteSpeed
-        $this->system->manageOLS('start');
+        $this->system->manageOLS("start");
 
-        if (!$result['success']) {
-            $this->logger->logError("SSL certificate installation failed for {$domain}: " . $result['output']);
+        if (!$result["success"]) {
+            $this->logger->logError(
+                "SSL certificate installation failed for {$domain}: " .
+                    $result["output"],
+            );
             return [
-                'success' => false,
-                'message' => 'Failed to obtain SSL certificate from Let\'s Encrypt',
-                'output' => $result['output']
+                "success" => false,
+                "message" =>
+                    'Failed to obtain SSL certificate from Let\'s Encrypt',
+                "output" => $result["output"],
             ];
         }
 
         // Configure OpenLiteSpeed to use the certificate
         $configResult = $this->configureSSLForDomain($domain);
 
-        if (!$configResult['success']) {
+        if (!$configResult["success"]) {
             return [
-                'success' => false,
-                'message' => 'Certificate obtained but failed to configure OpenLiteSpeed',
-                'details' => $configResult['message']
+                "success" => false,
+                "message" =>
+                    "Certificate obtained but failed to configure OpenLiteSpeed",
+                "details" => $configResult["message"],
             ];
         }
 
@@ -123,27 +133,29 @@ class SSLManager {
                 WHERE domain = ?
             ");
             $stmt->execute([
-                $this->getCertificatePath($domain, 'cert'),
-                $this->getCertificatePath($domain, 'key'),
-                $domain
+                $this->getCertificatePath($domain, "cert"),
+                $this->getCertificatePath($domain, "key"),
+                $domain,
             ]);
         } catch (PDOException $e) {
-            $this->logger->logError("Failed to update SSL info in database: " . $e->getMessage());
+            $this->logger->logError(
+                "Failed to update SSL info in database: " . $e->getMessage(),
+            );
         }
 
         // Set up auto-renewal cron job
         $this->setupAutoRenewal();
 
-        $this->logger->logActivity('ssl_install', 'ssl_certificate', null, [
-            'domain' => $domain,
-            'issuer' => 'Let\'s Encrypt',
-            'auto_renew' => true
+        $this->logger->logActivity("ssl_install", "ssl_certificate", null, [
+            "domain" => $domain,
+            "issuer" => 'Let\'s Encrypt',
+            "auto_renew" => true,
         ]);
 
         return [
-            'success' => true,
-            'message' => "SSL certificate installed successfully for {$domain}",
-            'certificate_info' => $this->getCertificateInfo($domain)
+            "success" => true,
+            "message" => "SSL certificate installed successfully for {$domain}",
+            "certificate_info" => $this->getCertificateInfo($domain),
         ];
     }
 
@@ -154,48 +166,52 @@ class SSLManager {
      * @param bool $force Force renewal even if not due
      * @return array Result with success status and message
      */
-    public function renewSSLCertificate($domain, $force = false) {
+    public function renewSSLCertificate($domain, $force = false)
+    {
         if (!$this->certificateExists($domain)) {
             return [
-                'success' => false,
-                'message' => 'No SSL certificate found for this domain'
+                "success" => false,
+                "message" => "No SSL certificate found for this domain",
             ];
         }
 
-        $command = $this->certbotPath . ' renew';
+        $command = $this->certbotPath . " renew";
 
         if ($force) {
-            $command .= ' --force-renewal';
+            $command .= " --force-renewal";
         }
 
         // Add domain-specific renewal
-        $command .= ' --cert-name ' . escapeshellarg($domain);
+        $command .= " --cert-name " . escapeshellarg($domain);
 
-        $command .= ' --non-interactive --quiet';
+        $command .= " --non-interactive --quiet";
 
         $result = $this->system->executeCommand($command, true);
 
-        if (!$result['success']) {
-            $this->logger->logError("SSL certificate renewal failed for {$domain}: " . $result['output']);
+        if (!$result["success"]) {
+            $this->logger->logError(
+                "SSL certificate renewal failed for {$domain}: " .
+                    $result["output"],
+            );
             return [
-                'success' => false,
-                'message' => 'Failed to renew SSL certificate',
-                'output' => $result['output']
+                "success" => false,
+                "message" => "Failed to renew SSL certificate",
+                "output" => $result["output"],
             ];
         }
 
         // Restart OpenLiteSpeed to apply new certificate
-        $this->system->manageOLS('restart');
+        $this->system->manageOLS("restart");
 
-        $this->logger->logActivity('ssl_renew', 'ssl_certificate', null, [
-            'domain' => $domain,
-            'force_renewed' => $force
+        $this->logger->logActivity("ssl_renew", "ssl_certificate", null, [
+            "domain" => $domain,
+            "force_renewed" => $force,
         ]);
 
         return [
-            'success' => true,
-            'message' => "SSL certificate renewed successfully for {$domain}",
-            'certificate_info' => $this->getCertificateInfo($domain)
+            "success" => true,
+            "message" => "SSL certificate renewed successfully for {$domain}",
+            "certificate_info" => $this->getCertificateInfo($domain),
         ];
     }
 
@@ -204,41 +220,53 @@ class SSLManager {
      *
      * @return array Result with success status and details
      */
-    public function renewAllDueCertificates() {
+    public function renewAllDueCertificates()
+    {
         if (!$this->isCertbotInstalled()) {
             return [
-                'success' => false,
-                'message' => 'Certbot is not installed'
+                "success" => false,
+                "message" => "Certbot is not installed",
             ];
         }
 
-        $command = $this->certbotPath . ' renew --non-interactive --quiet --no-self-upgrade';
+        $command =
+            $this->certbotPath .
+            " renew --non-interactive --quiet --no-self-upgrade";
 
         $result = $this->system->executeCommand($command, true);
 
         // Check if any certificates were renewed
-        $renewed = preg_match('/No renewals were attempted|The following certs have been renewed/i', $result['output']);
-        $hasOutput = !empty($result['output']);
+        $renewed = preg_match(
+            "/No renewals were attempted|The following certs have been renewed/i",
+            $result["output"],
+        );
+        $hasOutput = !empty($result["output"]);
 
-        if ($result['success'] && $hasOutput) {
+        if ($result["success"] && $hasOutput) {
             // Restart OpenLiteSpeed to apply renewed certificates
-            $this->system->manageOLS('restart');
+            $this->system->manageOLS("restart");
 
-            $this->logger->logActivity('ssl_renew_all', 'ssl_certificate', null, [
-                'output' => $result['output']
-            ]);
+            $this->logger->logActivity(
+                "ssl_renew_all",
+                "ssl_certificate",
+                null,
+                [
+                    "output" => $result["output"],
+                ],
+            );
 
             return [
-                'success' => true,
-                'message' => 'SSL certificates check completed',
-                'output' => $result['output']
+                "success" => true,
+                "message" => "SSL certificates check completed",
+                "output" => $result["output"],
             ];
         }
 
         return [
-            'success' => true,
-            'message' => 'SSL certificates check completed - no renewals needed',
-            'output' => $result['output']
+            "success" => true,
+            "message" =>
+                "SSL certificates check completed - no renewals needed",
+            "output" => $result["output"],
         ];
     }
 
@@ -248,13 +276,14 @@ class SSLManager {
      * @param string $domain Domain name
      * @return array Certificate information
      */
-    public function getCertificateInfo($domain) {
-        $certFile = $this->getCertificatePath($domain, 'cert');
+    public function getCertificateInfo($domain)
+    {
+        $certFile = $this->getCertificatePath($domain, "cert");
 
         if (!file_exists($certFile)) {
             return [
-                'has_certificate' => false,
-                'domain' => $domain
+                "has_certificate" => false,
+                "domain" => $domain,
             ];
         }
 
@@ -263,29 +292,31 @@ class SSLManager {
 
         if (!$certInfo) {
             return [
-                'has_certificate' => false,
-                'domain' => $domain,
-                'error' => 'Invalid certificate file'
+                "has_certificate" => false,
+                "domain" => $domain,
+                "error" => "Invalid certificate file",
             ];
         }
 
-        $validFrom = date('Y-m-d H:i:s', $certInfo['validFrom_time_t']);
-        $validTo = date('Y-m-d H:i:s', $certInfo['validTo_time_t']);
-        $daysUntilExpiry = floor(($certInfo['validTo_time_t'] - time()) / 86400);
+        $validFrom = date("Y-m-d H:i:s", $certInfo["validFrom_time_t"]);
+        $validTo = date("Y-m-d H:i:s", $certInfo["validTo_time_t"]);
+        $daysUntilExpiry = floor(
+            ($certInfo["validTo_time_t"] - time()) / 86400,
+        );
         $isExpiringSoon = $daysUntilExpiry <= 30;
 
         return [
-            'has_certificate' => true,
-            'valid' => true,
-            'domain' => $domain,
-            'subject' => $certInfo['subject']['CN'] ?? '',
-            'issuer' => $certInfo['issuer']['O'] ?? '',
-            'valid_from' => $validFrom,
-            'valid_to' => $validTo,
-            'days_until_expiry' => $daysUntilExpiry,
-            'expired' => $certInfo['validTo_time_t'] < time(),
-            'expiring_soon' => $isExpiringSoon,
-            'auto_renew_enabled' => $this->isAutoRenewalEnabled($domain)
+            "has_certificate" => true,
+            "valid" => true,
+            "domain" => $domain,
+            "subject" => $certInfo["subject"]["CN"] ?? "",
+            "issuer" => $certInfo["issuer"]["O"] ?? "",
+            "valid_from" => $validFrom,
+            "valid_to" => $validTo,
+            "days_until_expiry" => $daysUntilExpiry,
+            "expired" => $certInfo["validTo_time_t"] < time(),
+            "expiring_soon" => $isExpiringSoon,
+            "auto_renew_enabled" => $this->isAutoRenewalEnabled($domain),
         ];
     }
 
@@ -295,8 +326,9 @@ class SSLManager {
      * @param string $domain Domain name
      * @return bool True if certificate exists
      */
-    private function certificateExists($domain) {
-        $certFile = $this->getCertificatePath($domain, 'cert');
+    private function certificateExists($domain)
+    {
+        $certFile = $this->getCertificatePath($domain, "cert");
         return file_exists($certFile);
     }
 
@@ -307,18 +339,19 @@ class SSLManager {
      * @param string $type Type of file (cert, key, chain)
      * @return string Full path to certificate file
      */
-    private function getCertificatePath($domain, $type = 'cert') {
-        $livePath = $this->configPath . '/live/' . $domain;
+    private function getCertificatePath($domain, $type = "cert")
+    {
+        $livePath = $this->configPath . "/live/" . $domain;
 
         switch ($type) {
-            case 'cert':
-                return $livePath . '/fullchain.pem';
-            case 'key':
-                return $livePath . '/privkey.pem';
-            case 'chain':
-                return $livePath . '/chain.pem';
+            case "cert":
+                return $livePath . "/fullchain.pem";
+            case "key":
+                return $livePath . "/privkey.pem";
+            case "chain":
+                return $livePath . "/chain.pem";
             default:
-                return $livePath . '/fullchain.pem';
+                return $livePath . "/fullchain.pem";
         }
     }
 
@@ -328,14 +361,16 @@ class SSLManager {
      * @param string $domain Domain name
      * @return array Result with success status
      */
-    private function configureSSLForDomain($domain) {
-        $certFile = $this->getCertificatePath($domain, 'cert');
-        $keyFile = $this->getCertificatePath($domain, 'key');
+    private function configureSSLForDomain($domain)
+    {
+        $certFile = $this->getCertificatePath($domain, "cert");
+        $keyFile = $this->getCertificatePath($domain, "key");
 
         if (!file_exists($certFile) || !file_exists($keyFile)) {
             return [
-                'success' => false,
-                'message' => 'Certificate files not found after Let\'s Encrypt request'
+                "success" => false,
+                "message" =>
+                    'Certificate files not found after Let\'s Encrypt request',
             ];
         }
 
@@ -351,8 +386,9 @@ class SSLManager {
 
         if (!copy($certFile, $vhCertFile) || !copy($keyFile, $vhKeyFile)) {
             return [
-                'success' => false,
-                'message' => 'Failed to copy certificate files to virtual host directory'
+                "success" => false,
+                "message" =>
+                    "Failed to copy certificate files to virtual host directory",
             ];
         }
 
@@ -363,7 +399,7 @@ class SSLManager {
             $vhconfContent = file_get_contents($vhconfFile);
 
             // Check if SSL is already configured
-            if (strpos($vhconfContent, 'vhssl') === false) {
+            if (strpos($vhconfContent, "vhssl") === false) {
                 // Add SSL configuration
                 $sslConfig = "
   vhssl 1 {
@@ -376,15 +412,15 @@ class SSLManager {
   }
 ";
                 // Insert SSL configuration before the closing brace
-                $vhconfContent = str_replace('}', $sslConfig, $vhconfContent);
+                $vhconfContent = str_replace("}", $sslConfig, $vhconfContent);
 
                 file_put_contents($vhconfFile, $vhconfContent);
             }
         }
 
         return [
-            'success' => true,
-            'message' => 'SSL configured successfully for OpenLiteSpeed'
+            "success" => true,
+            "message" => "SSL configured successfully for OpenLiteSpeed",
         ];
     }
 
@@ -393,16 +429,22 @@ class SSLManager {
      *
      * @return array Result with success status
      */
-    private function setupAutoRenewal() {
-        $cronCommand = $this->certbotPath . ' renew --quiet --no-self-upgrade';
-        $cronEntry = "0 */12 * * * {$cronCommand} >> /var/log/ssl-renewal.log 2>&1\n";
+    private function setupAutoRenewal()
+    {
+        $cronCommand = $this->certbotPath . " renew --quiet --no-self-upgrade";
+        $cronEntry = "0 3 * * * {$cronCommand} >> /var/log/ssl-renewal.log 2>&1\n";
 
         // Add to crontab if not exists
-        $result = $this->system->executeCommand("crontab -l 2>/dev/null | grep -q '{$certbotPath} renew' || (crontab -l 2>/dev/null; echo '{$cronEntry}') | crontab -", true);
+        $result = $this->system->executeCommand(
+            "crontab -l 2>/dev/null | grep -q '{$certbotPath} renew' || (crontab -l 2>/dev/null; echo '{$cronEntry}') | crontab -",
+            true,
+        );
 
         return [
-            'success' => $result['success'],
-            'message' => $result['success'] ? 'Auto-renewal cron job configured' : 'Failed to configure auto-renewal'
+            "success" => $result["success"],
+            "message" => $result["success"]
+                ? "Auto-renewal cron job configured"
+                : "Failed to configure auto-renewal",
         ];
     }
 
@@ -412,13 +454,16 @@ class SSLManager {
      * @param string $domain Domain name
      * @return bool True if auto-renewal is enabled
      */
-    private function isAutoRenewalEnabled($domain) {
+    private function isAutoRenewalEnabled($domain)
+    {
         try {
-            $stmt = $this->conn->prepare("SELECT ssl_auto_renew FROM virtual_hosts WHERE domain = ?");
+            $stmt = $this->conn->prepare(
+                "SELECT ssl_auto_renew FROM virtual_hosts WHERE domain = ?",
+            );
             $stmt->execute([$domain]);
             $result = $stmt->fetch();
 
-            return $result && $result['ssl_auto_renew'] == 1;
+            return $result && $result["ssl_auto_renew"] == 1;
         } catch (PDOException $e) {
             return false;
         }
@@ -429,8 +474,10 @@ class SSLManager {
      *
      * @return bool True if Certbot is installed
      */
-    private function isCertbotInstalled() {
-        return file_exists($this->certbotPath) && is_executable($this->certbotPath);
+    private function isCertbotInstalled()
+    {
+        return file_exists($this->certbotPath) &&
+            is_executable($this->certbotPath);
     }
 
     /**
@@ -438,17 +485,23 @@ class SSLManager {
      *
      * @return array Result with success status
      */
-    private function installCertbot() {
-        $this->logger->logActivity('certbot_install', 'system', null, [
-            'action' => 'Installing Certbot'
+    private function installCertbot()
+    {
+        $this->logger->logActivity("certbot_install", "system", null, [
+            "action" => "Installing Certbot",
         ]);
 
-        $result = $this->system->executeCommand('apt update && apt install -y certbot', true);
+        $result = $this->system->executeCommand(
+            "apt update && apt install -y certbot",
+            true,
+        );
 
         return [
-            'success' => $result['success'],
-            'message' => $result['success'] ? 'Certbot installed successfully' : 'Failed to install Certbot',
-            'output' => $result['output']
+            "success" => $result["success"],
+            "message" => $result["success"]
+                ? "Certbot installed successfully"
+                : "Failed to install Certbot",
+            "output" => $result["output"],
         ];
     }
 
@@ -458,7 +511,8 @@ class SSLManager {
      * @param string $domain Domain to validate
      * @return bool True if domain is valid
      */
-    private function validateDomain($domain) {
+    private function validateDomain($domain)
+    {
         return filter_var($domain, FILTER_VALIDATE_DOMAIN) !== false;
     }
 
@@ -467,7 +521,8 @@ class SSLManager {
      *
      * @return array List of certificates with information
      */
-    public function getAllCertificates() {
+    public function getAllCertificates()
+    {
         try {
             $stmt = $this->conn->prepare("
                 SELECT domain, ssl_enabled, ssl_issuer, ssl_auto_renew
@@ -480,16 +535,18 @@ class SSLManager {
 
             $certificates = [];
             foreach ($vhosts as $vhost) {
-                $certInfo = $this->getCertificateInfo($vhost['domain']);
+                $certInfo = $this->getCertificateInfo($vhost["domain"]);
                 $certificates[] = array_merge($certInfo, [
-                    'issuer' => $vhost['ssl_issuer'],
-                    'auto_renew' => $vhost['ssl_auto_renew'] == 1
+                    "issuer" => $vhost["ssl_issuer"],
+                    "auto_renew" => $vhost["ssl_auto_renew"] == 1,
                 ]);
             }
 
             return $certificates;
         } catch (PDOException $e) {
-            $this->logger->logError("Failed to get SSL certificates: " . $e->getMessage());
+            $this->logger->logError(
+                "Failed to get SSL certificates: " . $e->getMessage(),
+            );
             return [];
         }
     }
@@ -500,9 +557,14 @@ class SSLManager {
      * @param string $domain Domain name
      * @return array Result with success status
      */
-    public function removeSSLCertificate($domain) {
+    public function removeSSLCertificate($domain)
+    {
         // Remove Let's Encrypt certificate
-        $command = $this->certbotPath . ' delete --cert-name ' . escapeshellarg($domain) . ' --non-interactive';
+        $command =
+            $this->certbotPath .
+            " delete --cert-name " .
+            escapeshellarg($domain) .
+            " --non-interactive";
         $result = $this->system->executeCommand($command, true);
 
         // Update database
@@ -518,16 +580,20 @@ class SSLManager {
             ");
             $stmt->execute([$domain]);
         } catch (PDOException $e) {
-            $this->logger->logError("Failed to update SSL info in database: " . $e->getMessage());
+            $this->logger->logError(
+                "Failed to update SSL info in database: " . $e->getMessage(),
+            );
         }
 
-        $this->logger->logActivity('ssl_remove', 'ssl_certificate', null, [
-            'domain' => $domain
+        $this->logger->logActivity("ssl_remove", "ssl_certificate", null, [
+            "domain" => $domain,
         ]);
 
         return [
-            'success' => $result['success'],
-            'message' => $result['success'] ? "SSL certificate removed for {$domain}" : 'Failed to remove SSL certificate'
+            "success" => $result["success"],
+            "message" => $result["success"]
+                ? "SSL certificate removed for {$domain}"
+                : "Failed to remove SSL certificate",
         ];
     }
 
@@ -538,7 +604,8 @@ class SSLManager {
      * @param bool $enable Enable or disable auto-renewal
      * @return array Result with success status
      */
-    public function setAutoRenewal($domain, $enable = true) {
+    public function setAutoRenewal($domain, $enable = true)
+    {
         try {
             $stmt = $this->conn->prepare("
                 UPDATE virtual_hosts
@@ -547,20 +614,29 @@ class SSLManager {
             ");
             $stmt->execute([$enable ? 1 : 0, $domain]);
 
-            $this->logger->logActivity('ssl_autorenew_toggle', 'ssl_certificate', null, [
-                'domain' => $domain,
-                'enabled' => $enable
-            ]);
+            $this->logger->logActivity(
+                "ssl_autorenew_toggle",
+                "ssl_certificate",
+                null,
+                [
+                    "domain" => $domain,
+                    "enabled" => $enable,
+                ],
+            );
 
             return [
-                'success' => true,
-                'message' => $enable ? "Auto-renewal enabled for {$domain}" : "Auto-renewal disabled for {$domain}"
+                "success" => true,
+                "message" => $enable
+                    ? "Auto-renewal enabled for {$domain}"
+                    : "Auto-renewal disabled for {$domain}",
             ];
         } catch (PDOException $e) {
-            $this->logger->logError("Failed to update auto-renewal setting: " . $e->getMessage());
+            $this->logger->logError(
+                "Failed to update auto-renewal setting: " . $e->getMessage(),
+            );
             return [
-                'success' => false,
-                'message' => 'Failed to update auto-renewal setting'
+                "success" => false,
+                "message" => "Failed to update auto-renewal setting",
             ];
         }
     }
@@ -570,7 +646,8 @@ class SSLManager {
      *
      * @return array SSL statistics
      */
-    public function getSSLStatistics() {
+    public function getSSLStatistics()
+    {
         $certificates = $this->getAllCertificates();
 
         $total = count($certificates);
@@ -580,27 +657,27 @@ class SSLManager {
         $letsEncrypt = 0;
 
         foreach ($certificates as $cert) {
-            if ($cert['expired']) {
+            if ($cert["expired"]) {
                 $expired++;
-            } elseif ($cert['expiring_soon']) {
+            } elseif ($cert["expiring_soon"]) {
                 $expiringSoon++;
             } else {
                 $valid++;
             }
 
-            if (stripos($cert['issuer'], "Let's Encrypt") !== false) {
+            if (stripos($cert["issuer"], "Let's Encrypt") !== false) {
                 $letsEncrypt++;
             }
         }
 
         return [
-            'total' => $total,
-            'valid' => $valid,
-            'expired' => $expired,
-            'expiring_soon' => $expiringSoon,
-            'lets_encrypt' => $letsEncrypt,
-            'certbot_installed' => $this->isCertbotInstalled(),
-            'auto_renewal_enabled' => $letsEncrypt > 0 // Assume enabled if Let's Encrypt certs exist
+            "total" => $total,
+            "valid" => $valid,
+            "expired" => $expired,
+            "expiring_soon" => $expiringSoon,
+            "lets_encrypt" => $letsEncrypt,
+            "certbot_installed" => $this->isCertbotInstalled(),
+            "auto_renewal_enabled" => $letsEncrypt > 0, // Assume enabled if Let's Encrypt certs exist
         ];
     }
 }
