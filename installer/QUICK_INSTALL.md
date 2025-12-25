@@ -1,14 +1,37 @@
 # GDOLS Panel - Quick Installation Guide
 
-## 🚀 One-Line Installation (Ubuntu 24.04 LTS)
+## 🚀 Quick Installation (Ubuntu 24.04 LTS)
 
-The easiest way to install GDOLS Panel:
+### Method 1: Clone Repository (Recommended)
+
+The recommended way to install GDOLS Panel:
 
 ```bash
-wget https://github.com/godimyid/gdols-panel/raw/main/installer/install.sh && sudo bash install.sh
+# Clone the repository
+cd /tmp
+git clone https://github.com/godimyid/gdols-panel.git
+cd gdols-panel
+
+# Run installer
+sudo bash installer/install.sh
 ```
 
-That's it! The installer will handle everything automatically.
+### Method 2: Download Repository Zip
+
+If you don't have git:
+
+```bash
+# Download repository
+cd /tmp
+wget https://github.com/godimyid/gdols-panel/archive/refs/heads/main.zip
+unzip main.zip
+cd gdols-panel-main
+
+# Run installer
+sudo bash installer/install.sh
+```
+
+**⚠️ IMPORTANT:** Do NOT download only `install.sh`. The installer needs the complete repository with application files included in the `installer/opt/` directory.
 
 ---
 
@@ -21,11 +44,49 @@ That's it! The installer will handle everything automatically.
 
 ---
 
-## 🔧 Manual Installation
+## 🔧 Troubleshooting Installation Issues
 
-If you prefer manual installation or the automated installer fails:
+### Issue: "Cannot find application files"
 
-### Step 1: Install Dependencies
+**Problem:** Installer stops with error "Cannot find application files"
+
+**Cause:** Installer is looking for application files in the repository structure, but they weren't downloaded.
+
+**Solution:**
+
+❌ **WRONG:**
+```bash
+# This will NOT work - only downloads installer script
+wget https://github.com/godimyid/gdols-panel/raw/main/installer/install.sh
+sudo bash install.sh  # Error: Cannot find application files
+```
+
+✅ **CORRECT:**
+```bash
+# Clone full repository (includes application files)
+cd /tmp
+git clone https://github.com/godimyid/gdols-panel.git
+cd gdols-panel
+sudo bash installer/install.sh
+```
+
+Or download repository zip:
+```bash
+cd /tmp
+wget https://github.com/godimyid/gdols-panel/archive/refs/heads/main.zip
+unzip main.zip
+cd gdols-panel-main
+sudo bash installer/install.sh
+```
+
+### Issue: Permission Denied
+
+```bash
+chmod +x installer/install.sh
+sudo bash installer/install.sh
+```
+
+### Issue: PHP Installation Failed
 
 ```bash
 sudo apt update && sudo apt upgrade -y
@@ -114,16 +175,11 @@ cat /opt/gdols-panel/VERSION
 
 ---
 
-## 🔧 Troubleshooting
+## 📝 Manual Installation (Advanced)
 
-### Issue: Permission Denied
+If you prefer to install components manually:
 
-```bash
-chmod +x install.sh
-sudo bash install.sh
-```
-
-### Issue: PHP Installation Failed
+### Step 1: Install Dependencies
 
 ```bash
 # Set non-interactive mode
