@@ -217,7 +217,6 @@ install_php() {
         php8.3-bcmath \
         php8.3-intl \
         php8.3-cli
-```
     then
         print_success "PHP 8.3 installed successfully"
     else
@@ -335,8 +334,7 @@ copy_application_files() {
             print_info "Copying from installer directory..."
             cp -r installer/opt/gdols-panel/* "$INSTALL_DIR/"
         elif [ -d "GDOLS Panel" ]; then
-    ```
-        print_info "Copying from GDOLS Panel directory..."
+            print_info "Copying from GDOLS Panel directory..."
         # Copy API files
         if [ -d "GDOLS Panel/api" ]; then
             cp -r "GDOLS Panel/api" "$INSTALL_DIR/app/"
@@ -597,91 +595,91 @@ EOF
 
     print_success "OpenLiteSpeed virtual host configured"
     print_warning "Please restart OpenLiteSpeed to apply changes: systemctl restart lsws"
-    }
+}
 
-    fix_static_files() {
-        print_step "Fixing Static File Serving Issues"
+fix_static_files() {
+    print_step "Fixing Static File Serving Issues"
 
-        print_info "Checking for common static file issues..."
+    print_info "Checking for common static file issues..."
 
-        # Fix 1: Ensure correct ownership for OpenLiteSpeed
-        if command -v lshttpd &> /dev/null || systemctl is-active --quiet lsws 2>/dev/null; then
-            print_info "Fixing OpenLiteSpeed file ownership..."
-            chown -R nobody:nogroup "$INSTALL_DIR/public" 2>/dev/null || true
-            chown -R nobody:nogroup /usr/local/lsws/vhosts/gdols-panel 2>/dev/null || true
-            chmod -R 755 "$INSTALL_DIR/public" 2>/dev/null || true
-            chmod -R 755 /usr/local/lsws/vhosts/gdols-panel 2>/dev/null || true
-            print_success "OpenLiteSpeed permissions fixed"
-        fi
+    # Fix 1: Ensure correct ownership for OpenLiteSpeed
+    if command -v lshttpd &> /dev/null || systemctl is-active --quiet lsws 2>/dev/null; then
+        print_info "Fixing OpenLiteSpeed file ownership..."
+        chown -R nobody:nogroup "$INSTALL_DIR/public" 2>/dev/null || true
+        chown -R nobody:nogroup /usr/local/lsws/vhosts/gdols-panel 2>/dev/null || true
+        chmod -R 755 "$INSTALL_DIR/public" 2>/dev/null || true
+        chmod -R 755 /usr/local/lsws/vhosts/gdols-panel 2>/dev/null || true
+        print_success "OpenLiteSpeed permissions fixed"
+    fi
 
-        # Fix 2: Ensure Apache/Nginx ownership if applicable
-        if systemctl is-active --quiet apache2 2>/dev/null; then
-            print_info "Fixing Apache file ownership..."
-            chown -R www-data:www-data "$INSTALL_DIR/public" 2>/dev/null || true
-            print_success "Apache permissions fixed"
-        fi
+    # Fix 2: Ensure Apache/Nginx ownership if applicable
+    if systemctl is-active --quiet apache2 2>/dev/null; then
+        print_info "Fixing Apache file ownership..."
+        chown -R www-data:www-data "$INSTALL_DIR/public" 2>/dev/null || true
+        print_success "Apache permissions fixed"
+    fi
 
-        if systemctl is-active --quiet nginx 2>/dev/null; then
-            print_info "Fixing Nginx file ownership..."
-            chown -R www-data:www-data "$INSTALL_DIR/public" 2>/dev/null || true
-            print_success "Nginx permissions fixed"
-        fi
+    if systemctl is-active --quiet nginx 2>/dev/null; then
+        print_info "Fixing Nginx file ownership..."
+        chown -R www-data:www-data "$INSTALL_DIR/public" 2>/dev/null || true
+        print_success "Nginx permissions fixed"
+    fi
 
-        # Fix 3: Verify static files exist
-        print_info "Verifying static files..."
-        if [ -f "$INSTALL_DIR/public/assets/css/style.css" ]; then
-            print_success "CSS files found"
-            ls -lh "$INSTALL_DIR/public/assets/css/style.css"
-        else
-            print_error "CSS files not found at $INSTALL_DIR/public/assets/css/"
-        fi
+    # Fix 3: Verify static files exist
+    print_info "Verifying static files..."
+    if [ -f "$INSTALL_DIR/public/assets/css/style.css" ]; then
+        print_success "CSS files found"
+        ls -lh "$INSTALL_DIR/public/assets/css/style.css"
+    else
+        print_error "CSS files not found at $INSTALL_DIR/public/assets/css/"
+    fi
 
-        if [ -f "$INSTALL_DIR/public/assets/js/app.js" ]; then
-            print_success "JS files found"
-            ls -lh "$INSTALL_DIR/public/assets/js/app.js"
-        else
-            print_error "JS files not found at $INSTALL_DIR/public/assets/js/"
-        fi
+    if [ -f "$INSTALL_DIR/public/assets/js/app.js" ]; then
+        print_success "JS files found"
+        ls -lh "$INSTALL_DIR/public/assets/js/app.js"
+    else
+        print_error "JS files not found at $INSTALL_DIR/public/assets/js/"
+    fi
 
-        # Fix 4: Recreate symlink if needed
-        if [ -L /usr/local/lsws/vhosts/gdols-panel/html ]; then
-            print_info "Checking symlink..."
-            SYMLINK_TARGET=$(readlink /usr/local/lsws/vhosts/gdols-panel/html)
-            print_info "Symlink points to: $SYMLINK_TARGET"
+    # Fix 4: Recreate symlink if needed
+    if [ -L /usr/local/lsws/vhosts/gdols-panel/html ]; then
+        print_info "Checking symlink..."
+        SYMLINK_TARGET=$(readlink /usr/local/lsws/vhosts/gdols-panel/html)
+        print_info "Symlink points to: $SYMLINK_TARGET"
 
-            if [ ! -e /usr/local/lsws/vhosts/gdols-panel/html ]; then
-                print_warning "Broken symlink detected, recreating..."
-                rm -f /usr/local/lsws/vhosts/gdols-panel/html
-                ln -sf "$INSTALL_DIR/public" /usr/local/lsws/vhosts/gdols-panel/html
-                print_success "Symlink recreated"
-            fi
-        else
-            print_warning "Symlink not found, creating..."
-            mkdir -p /usr/local/lsws/vhosts/gdols-panel
+        if [ ! -e /usr/local/lsws/vhosts/gdols-panel/html ]; then
+            print_warning "Broken symlink detected, recreating..."
+            rm -f /usr/local/lsws/vhosts/gdols-panel/html
             ln -sf "$INSTALL_DIR/public" /usr/local/lsws/vhosts/gdols-panel/html
-            print_success "Symlink created"
+            print_success "Symlink recreated"
         fi
+    else
+        print_warning "Symlink not found, creating..."
+        mkdir -p /usr/local/lsws/vhosts/gdols-panel
+        ln -sf "$INSTALL_DIR/public" /usr/local/lsws/vhosts/gdols-panel/html
+        print_success "Symlink created"
+    fi
 
-        # Fix 5: Test static file access
-        print_info "Testing static file access..."
-        if [ -f "$INSTALL_DIR/public/assets/css/style.css" ]; then
-            FILE_SIZE=$(stat -c%s "$INSTALL_DIR/public/assets/css/style.css" 2>/dev/null || echo "0")
-            if [ "$FILE_SIZE" -gt 0 ]; then
-                print_success "Static files are accessible (size: $FILE_SIZE bytes)"
-            else
-                print_error "Static files have zero size or cannot be read"
-            fi
+    # Fix 5: Test static file access
+    print_info "Testing static file access..."
+    if [ -f "$INSTALL_DIR/public/assets/css/style.css" ]; then
+        FILE_SIZE=$(stat -c%s "$INSTALL_DIR/public/assets/css/style.css" 2>/dev/null || echo "0")
+        if [ "$FILE_SIZE" -gt 0 ]; then
+            print_success "Static files are accessible (size: $FILE_SIZE bytes)"
+        else
+            print_error "Static files have zero size or cannot be read"
         fi
+    fi
 
-        print_success "Static file troubleshooting completed"
-        echo ""
-        print_warning "If issues persist, restart your web server:"
-        print_info "  OpenLiteSpeed: sudo systemctl restart lsws"
-        print_info "  Apache:       sudo systemctl restart apache2"
-        print_info "  Nginx:        sudo systemctl restart nginx"
-    }
+    print_success "Static file troubleshooting completed"
+    echo ""
+    print_warning "If issues persist, restart your web server:"
+    print_info "  OpenLiteSpeed: sudo systemctl restart lsws"
+    print_info "  Apache:       sudo systemctl restart apache2"
+    print_info "  Nginx:        sudo systemctl restart nginx"
+}
 
-    setup_cron_jobs() {
+setup_cron_jobs() {
     print_step "Setting Up Cron Jobs"
 
     print_info "Installing backup automation..."
