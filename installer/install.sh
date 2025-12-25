@@ -495,6 +495,22 @@ setup_database() {
         print_success "Database configured with auto-generated password"
         print_warning "Password saved to $CONFIG_DIR/gdols.conf"
     fi
+
+    # Save credentials to separate file for easy reference
+    cat > "$CONFIG_DIR/.credentials.txt" << EOF
+GDOLS Panel Database Credentials
+=================================
+Database: gdols_panel
+Username: gdols_user
+Password: $DB_PASSWORD
+Host: localhost
+Port: 3306
+
+Generated: $(date)
+⚠ IMPORTANT: Keep this file secure and delete after saving credentials elsewhere!
+EOF
+    chmod 600 "$CONFIG_DIR/.credentials.txt"
+    print_success "Credentials saved to $CONFIG_DIR/.credentials.txt"
 }
 
 setup_systemd_service() {
@@ -729,6 +745,12 @@ display_completion() {
     # Get server IP
     SERVER_IP=$(hostname -I | awk '{print $1}')
 
+    # Get database credentials from config if exists
+    DB_PASSWORD=""
+    if [ -f "$CONFIG_DIR/gdols.conf" ]; then
+        DB_PASSWORD=$(grep "'password'" "$CONFIG_DIR/gdols.conf" | grep -oP "' => '\K[^']+" | head -1)
+    fi
+
     echo ""
     print_success "GDOLS Panel v${APP_VERSION} has been successfully installed!"
     echo ""
@@ -743,31 +765,57 @@ display_completion() {
     echo -e "  ${GREEN}Service Name:${NC}          $SERVICE_NAME"
     echo ""
     echo -e "${CYAN}═══════════════════════════════════════════════════════════════${NC}"
+    echo -e "${RED}  🔐 LOGIN CREDENTIALS${NC}"
+    echo -e "${CYAN}═══════════════════════════════════════════════════════════════${NC}"
+    echo ""
+    echo -e "  ${BLUE}GDOLS Panel:${NC}"
+    echo -e "     ${YELLOW}URL:${NC}        http://$SERVER_IP:8088"
+    echo -e "     ${YELLOW}Username:${NC}   ${GREEN}admin${NC}"
+    echo -e "     ${YELLOW}Password:${NC}   ${GREEN}admin123${NC}"
+    echo -e "     ${RED}⚠ CHANGE PASSWORD IMMEDIATELY AFTER FIRST LOGIN!${NC}"
+    echo ""
+    echo -e "  ${BLUE}OpenLiteSpeed WebAdmin:${NC}"
+    echo -e "     ${YELLOW}URL:${NC}        http://$SERVER_IP:7080"
+    echo -e "     ${YELLOW}Username:${NC}   ${GREEN}admin${NC}"
+    echo -e "     ${YELLOW}Password:${NC}   ${GREEN}CHANGE_THIS${NC}"
+    echo -e "     ${RED}⚠ CHANGE PASSWORD IMMEDIATELY!${NC}"
+    echo ""
+    if [ ! -z "$DB_PASSWORD" ]; then
+        echo -e "  ${BLUE}Database Credentials:${NC}"
+        echo -e "     ${YELLOW}Database:${NC}   gdols_panel"
+        echo -e "     ${YELLOW}Username:${NC}   gdols_user"
+        echo -e "     ${YELLOW}Password:${NC}   ${GREEN}$DB_PASSWORD${NC}"
+        echo -e "     ${YELLOW}Saved in:${NC}   $CONFIG_DIR/.credentials.txt"
+        echo ""
+    fi
+    echo -e "${CYAN}═══════════════════════════════════════════════════════════════${NC}"
     echo -e "${CYAN}  QUICK START${NC}"
     echo -e "${CYAN}═══════════════════════════════════════════════════════════════${NC}"
     echo ""
-    echo -e "  1. ${BLUE}Edit configuration:${NC}"
-    echo -e "     ${YELLOW}sudo nano $CONFIG_DIR/gdols.conf${NC}"
-    echo ""
-    echo -e "  2. ${BLUE}Start the service:${NC}"
+    echo -e "  1. ${BLUE}Start the service:${NC}"
     echo -e "     ${YELLOW}sudo systemctl start $SERVICE_NAME${NC}"
     echo ""
-    echo -e "  3. ${BLUE}Check service status:${NC}"
+    echo -e "  2. ${BLUE}Check service status:${NC}"
     echo -e "     ${YELLOW}sudo systemctl status $SERVICE_NAME${NC}"
     echo ""
-    echo -e "  4. ${BLUE}Enable service on boot:${NC}"
-    echo -e "     ${YELLOW}sudo systemctl enable $SERVICE_NAME${NC}"
-    echo ""
-    echo -e "  5. ${BLUE}Restart OpenLiteSpeed:${NC}"
+    echo -e "  3. ${BLUE}Restart OpenLiteSpeed:${NC}"
     echo -e "     ${YELLOW}sudo systemctl restart lsws${NC}"
     echo ""
-    echo -e "  6. ${BLUE}Access the panel:${NC}"
-    echo -e "     ${YELLOW}http://$SERVER_IP:8088${NC} (OpenLiteSpeed default port)"
+    echo -e "  4. ${BLUE}Access GDOLS Panel:${NC}"
+    echo -e "     ${YELLOW}http://$SERVER_IP:8088${NC}"
+    echo ""
+    echo -e "  5. ${BLUE}Access OpenLiteSpeed WebAdmin:${NC}"
+    echo -e "     ${YELLOW}http://$SERVER_IP:7080${NC}"
     echo ""
     echo -e "${CYAN}═══════════════════════════════════════════════════════════════${NC}"
     echo ""
 
-    print_warning "IMPORTANT: Please update the configuration file with your secure passwords!"
+    print_warning "IMPORTANT SECURITY NOTES:"
+    echo -e "  ${RED}1.${NC} Change GDOLS Panel admin password immediately"
+    echo -e "  ${RED}2.${NC} Change OpenLiteSpeed WebAdmin password immediately"
+    echo -e "  ${RED}3.${NC} Update configuration file with your secure settings"
+    echo -e "  ${RED}4.${NC} Save database credentials securely"
+    echo ""
     print_info "Run: $INSTALL_DIR/bin/status --verbose for detailed status information"
     echo ""
 }
