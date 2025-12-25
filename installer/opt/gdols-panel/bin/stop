@@ -1,0 +1,93 @@
+#!/bin/bash
+##############################################################################
+# GDOLS Panel - Stop Script
+# Location: /opt/gdols-panel/bin/stop
+# Description: Stop the GDOLS Panel service
+##############################################################################
+
+set -e
+
+# Configuration
+APP_NAME="GDOLS Panel"
+APP_VERSION="1.1.0"
+BASE_DIR="/opt/gdols-panel"
+PID_FILE="/var/lib/gdols/runtime/gdols-panel.pid"
+LOG_FILE="/var/log/gdols/panel.log"
+
+# Colors for output
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+NC='\033[0m' # No Color
+
+# Function to print colored messages
+print_message() {
+    local color=$1
+    local message=$2
+    echo -e "${color}[$(date +'%Y-%m-%d %H:%M:%S')]${NC} $message"
+}
+
+# Function to check if service is running
+is_running() {
+    if [ -f "$PID_FILE" ]; then
+        PID=$(cat "$PID_FILE")
+        if ps -p "$PID" > /dev/null 2>&1; then
+            return 0
+        else
+            rm -f "$PID_FILE"
+            return 1
+        fi
+    fi
+    return 1
+}
+
+# Function to stop the panel
+stop_panel() {
+    print_message "$BLUE" "Stopping $APP_NAME v$APP_VERSION..."
+
+    # Check if running
+    if ! is_running; then
+        print_message "$YELLOW" "$APP_NAME is not running"
+        exit 0
+    fi
+
+    PID=$(cat "$PID_FILE")
+    print_message "$BLUE" "Stopping process $PID..."
+
+    # Send TERM signal
+    kill -TERM "$PID" 2>/dev/null || true
+
+    # Wait for process to terminate (max 30 seconds)
+    local count=0
+    while [ $count -lt 30 ]; do
+        if ! ps -p "$PID" > /dev/null 2>&1; then
+            print_message "$GREEN" "$APP_NAME stopped successfully"
+            rm -f "$PID_FILE"
+            exit 0
+        fi
+        sleep 1
+        count=$((count + 1))
+    done
+
+    # If still running, force kill
+    print_message "$YELLOW" "Service did not stop gracefully, forcing..."
+    kill -KILL "$PID" 2>/dev/null || true
+    rm -f "$PID_FILE"
+    print_message "$GREEN" "$APP_NAME stopped successfully (forced)"
+}
+
+# Main execution
+main() {
+    # Check if running as root
+    if [ "$EUID" -ne 0 ]; then
+        print_message "$RED" "Please run as root or with sudo"
+        exit 1
+    fi
+
+    # Stop the panel
+    stop_panel
+}
+
+# Run main function
+main "$@"

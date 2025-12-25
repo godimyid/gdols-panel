@@ -1,0 +1,77 @@
+#!/bin/bash
+##############################################################################
+# GDOLS Panel - Restart Script
+# Location: /opt/gdols-panel/bin/restart
+# Description: Restart the GDOLS Panel service
+##############################################################################
+
+set -e
+
+# Configuration
+APP_NAME="GDOLS Panel"
+APP_VERSION="1.1.0"
+BASE_DIR="/opt/gdols-panel"
+PID_FILE="/var/lib/gdols/runtime/gdols-panel.pid"
+LOG_FILE="/var/log/gdols/panel.log"
+
+# Colors for output
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+NC='\033[0m' # No Color
+
+# Function to print colored messages
+print_message() {
+    local color=$1
+    local message=$2
+    echo -e "${color}[$(date +'%Y-%m-%d %H:%M:%S')]${NC} $message"
+}
+
+# Function to restart the panel
+restart_panel() {
+    print_message "$BLUE" "Restarting $APP_NAME v$APP_VERSION..."
+
+    # Stop the service
+    if [ -f "$BASE_DIR/bin/stop" ]; then
+        print_message "$BLUE" "Stopping service..."
+        "$BASE_DIR/bin/stop" || true
+    else
+        print_message "$YELLOW" "Stop script not found, attempting manual stop..."
+        if [ -f "$PID_FILE" ]; then
+            PID=$(cat "$PID_FILE")
+            kill -TERM "$PID" 2>/dev/null || true
+            sleep 2
+            kill -KILL "$PID" 2>/dev/null || true
+            rm -f "$PID_FILE"
+        fi
+    fi
+
+    # Wait a moment for clean shutdown
+    sleep 2
+
+    # Start the service
+    if [ -f "$BASE_DIR/bin/start" ]; then
+        print_message "$BLUE" "Starting service..."
+        "$BASE_DIR/bin/start"
+        print_message "$GREEN" "$APP_NAME restarted successfully"
+    else
+        print_message "$RED" "Start script not found!"
+        exit 1
+    fi
+}
+
+# Main execution
+main() {
+    # Check if running as root
+    if [ "$EUID" -ne 0 ]; then
+        print_message "$RED" "Please run as root or with sudo"
+        exit 1
+    fi
+
+    # Restart the panel
+    restart_panel
+}
+
+# Run main function
+main "$@"

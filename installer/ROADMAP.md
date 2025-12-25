@@ -1,9 +1,9 @@
 ```path/to/GDOLS Panel/ROADMAP.md#L1-300
 # GDOLS Panel - Development Roadmap
 
-**Version:** 1.0.0  
+**Version:** 1.1.0  
 **Last Updated:** December 25, 2025  
-**Status:** First Public Release
+**Status:** FHS-Compliant Release
 
 ---
 
@@ -34,6 +34,17 @@ GDOLS Panel aims to be the most comprehensive and user-friendly management panel
 ---
 
 ## ✅ Completed Features (Version 1.0.0 - 1.2.0)
+
+### Version 1.1.0 (December 2025) - FHS-Compliant Release
+- ✅ FHS-Compliant directory structure (/opt, /etc, /var/log, /var/lib)
+- ✅ Automated installer script with dependency management
+- ✅ Systemd service integration
+- ✅ Service management scripts (start, stop, restart, status)
+- ✅ Enhanced documentation (INSTALL, FHS_MIGRATION, SUPPORT)
+- ✅ Ko-Fi support integration
+- ✅ Support page in panel UI
+- ✅ Security hardening with proper file permissions
+- ✅ Log rotation configuration
 
 ### Version 1.0.0 (December 2025) - First Public Release
 - ✅ OpenLiteSpeed management

@@ -1,0 +1,165 @@
+# GDOLS Panel - Git Ignore File
+# Description: Git ignore patterns for GDOLS Panel v1.1.0
+
+# =============================================================================
+# SENSITIVE FILES & CONFIGURATIONS
+# =============================================================================
+# Never commit sensitive configuration files
+etc/gdols/gdols.conf
+etc/gdols/.encryption_key
+*.key
+*.pem
+*.crt
+*.csr
+
+# =============================================================================
+# LOG FILES
+# =============================================================================
+logs/
+*.log
+logs/*.log
+**/logs/
+
+# System logs (after installation)
+/var/log/gdols/
+*.log.*
+
+# =============================================================================
+# RUNTIME DATA & TEMPORARY FILES
+# =============================================================================
+storage/cache/*
+storage/sessions/*
+storage/uploads/*
+!storage/cache/.gitkeep
+!storage/sessions/.gitkeep
+!storage/uploads/.gitkeep
+
+# Runtime directories (after installation)
+/var/lib/gdols/runtime/
+/tmp/
+
+# =============================================================================
+# BACKUP FILES
+# =============================================================================
+*.backup
+*.bak
+*.old
+*~
+*.swp
+*.swo
+
+# Backup directories
+/backups/
+/var/lib/gdols/backups/
+*.sql.gz
+*.tar.gz
+
+# =============================================================================
+# DEPENDENCIES & VENDOR
+# =============================================================================
+vendor/
+node_modules/
+bower_components/
+composer.lock
+package-lock.json
+yarn.lock
+
+# =============================================================================
+# IDE & EDITOR FILES
+# =============================================================================
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+.DS_Store
+Thumbs.db
+*.code-workspace
+.settings/
+*.iml
+
+# =============================================================================
+# OPERATING SYSTEM FILES
+# =============================================================================
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+Desktop.ini
+
+# =============================================================================
+# BUILD ARTIFACTS
+# =============================================================================
+build/
+dist/
+out/
+*.min.js.map
+*.min.css.map
+
+# =============================================================================
+# TESTING & COVERAGE
+# =============================================================================
+coverage/
+.nyc_output/
+*.test.log
+phpunit.xml
+
+# =============================================================================
+# DOCUMENTATION TEMP FILES
+# =============================================================================
+~$*.doc
+~$*.xls
+~$*.ppt
+*.tmp
+*.temp
+
+# =============================================================================
+# SPECIFIC TO GDOLS PANEL
+# =============================================================================
+# Installation-specific files
+install.local.sh
+*.local
+*.local.*
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# User-uploaded files
+storage/uploads/*
+!storage/uploads/.gitkeep
+
+# Database exports (except examples)
+*.sql
+!*.sql.example
+!database/schema.sql
+
+# =============================================================================
+# COMPOSER & PHP
+# =============================================================================
+composer.phar
+.phpunit.result.cache
+
+# =============================================================================
+# CERTIFICATES & SECURITY
+# =============================================================================
+*.pem
+*.key
+*.crt
+*.csr
+etc/ssl/certs/*
+etc/ssl/private/*
+!etc/ssl/certs/.gitkeep
+!etc/ssl/private/.gitkeep
+
+# =============================================================================
+# KEEP EMPTY DIRECTORIES
+# =============================================================================
+# These files should exist but contain no content
+!storage/cache/.gitkeep
+!storage/sessions/.gitkeep
+!storage/uploads/.gitkeep
+!logs/.gitkeep

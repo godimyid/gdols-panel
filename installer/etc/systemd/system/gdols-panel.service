@@ -1,0 +1,43 @@
+Description=GDOLS Panel Service
+Documentation=https://github.com/godimyid/gdols-panel
+After=network.target mysql.service redis-server.service lsws.service
+Wants=mysql.service redis-server.service
+
+[Service]
+Type=simple
+User=root
+Group=root
+WorkingDirectory=/opt/gdols-panel
+
+# Start command
+ExecStart=/opt/gdols-panel/bin/start
+
+# Stop command
+ExecStop=/opt/gdols-panel/bin/stop
+
+# Restart command
+ExecReload=/opt/gdols-panel/bin/restart
+
+# Auto-restart configuration
+Restart=always
+RestartSec=10
+
+# Process management
+PIDFile=/var/lib/gdols/runtime/gdols-panel.pid
+StandardOutput=append:/var/log/gdols/panel.log
+StandardError=append:/var/log/gdols/panel-error.log
+
+# Security settings
+NoNewPrivileges=false
+PrivateTmp=true
+
+# Resource limits
+LimitNOFILE=65536
+LimitNPROC=4096
+
+# Environment
+Environment=GDOLS_PANEL_ENV=production
+Environment=GDOLS_PANEL_CONFIG=/etc/gdols/gdols.conf
+
+[Install]
+WantedBy=multi-user.target

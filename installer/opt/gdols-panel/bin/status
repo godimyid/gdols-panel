@@ -1,0 +1,286 @@
+#!/bin/bash
+##############################################################################
+# GDOLS Panel - Status Script
+# Location: /opt/gdols-panel/bin/status
+# Description: Check the status of the GDOLS Panel service
+##############################################################################
+
+set -e
+
+# Configuration
+APP_NAME="GDOLS Panel"
+APP_VERSION="1.1.0"
+BASE_DIR="/opt/gdols-panel"
+CONFIG_FILE="/etc/gdols/gdols.conf"
+PID_FILE="/var/lib/gdols/runtime/gdols-panel.pid"
+LOG_FILE="/var/log/gdols/panel.log"
+
+# Colors for output
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+CYAN='\033[0;36m'
+NC='\033[0m' # No Color
+
+# Function to print colored messages
+print_message() {
+    local color=$1
+    local message=$2
+    echo -e "${color}[$(date +'%Y-%m-%d %H:%M:%S')]${NC} $message"
+}
+
+# Function to print section headers
+print_header() {
+    echo ""
+    echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+    echo -e "${CYAN}  $1${NC}"
+    echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+    echo ""
+}
+
+# Function to check if service is running
+is_running() {
+    if [ -f "$PID_FILE" ]; then
+        PID=$(cat "$PID_FILE")
+        if ps -p "$PID" > /dev/null 2>&1; then
+            return 0
+        else
+            return 1
+        fi
+    fi
+    return 1
+}
+
+# Function to get service status
+get_service_status() {
+    print_header "SERVICE STATUS"
+
+    if is_running; then
+        PID=$(cat "$PID_FILE")
+        print_message "$GREEN" "✓ $APP_NAME is RUNNING"
+        echo ""
+        echo "  Process ID: $PID"
+        echo "  Started: $(ps -p $PID -o lstart= 2>/dev/null || echo 'Unknown')"
+        echo "  Uptime: $(ps -p $PID -o etime= 2>/dev/null || echo 'Unknown')"
+
+        # Memory usage
+        if command -v ps &> /dev/null; then
+            MEM_USAGE=$(ps -p $PID -o rss= 2>/dev/null | awk '{printf "%.2f MB", $1/1024}' || echo "Unknown")
+            CPU_USAGE=$(ps -p $PID -o %cpu= 2>/dev/null || echo "Unknown")
+            echo "  Memory: $MEM_USAGE"
+            echo "  CPU: ${CPU_USAGE}%"
+        fi
+    else
+        print_message "$RED" "✗ $APP_NAME is NOT RUNNING"
+        if [ -f "$PID_FILE" ]; then
+            echo "  Stale PID file found at $PID_FILE"
+        fi
+    fi
+}
+
+# Function to check systemd service status
+check_systemd() {
+    print_header "SYSTEMD SERVICE"
+
+    if systemctl is-active --quiet &> /dev/null; then
+        if systemctl is-enabled gdols-panel &> /dev/null; then
+            print_message "$GREEN" "✓ Systemd service is installed and enabled"
+            echo ""
+            systemctl status gdols-panel --no-pager -l 2>/dev/null | head -n 10 || echo "  Systemd service details unavailable"
+        else
+            print_message "$YELLOW" "⚠ Systemd service is installed but not enabled"
+        fi
+    else
+        print_message "$YELLOW" "⚠ Systemd service not found or systemctl unavailable"
+        echo "  This is normal if not running via systemd"
+    fi
+}
+
+# Function to check configuration
+check_configuration() {
+    print_header "CONFIGURATION"
+
+    if [ -f "$CONFIG_FILE" ]; then
+        print_message "$GREEN" "✓ Configuration file found: $CONFIG_FILE"
+
+        # Check permissions
+        PERMS=$(stat -c %a "$CONFIG_FILE" 2>/dev/null || stat -f %A "$CONFIG_FILE" 2>/dev/null || echo "Unknown")
+        OWNER=$(stat -c %U:%G "$CONFIG_FILE" 2>/dev/null || stat -f %Su:%Sg "$CONFIG_FILE" 2>/dev/null || echo "Unknown")
+
+        echo "  Permissions: $PERMS"
+        echo "  Owner: $OWNER"
+
+        if [ "$PERMS" = "600" ] || [ "$PERMS" = "400" ]; then
+            print_message "$GREEN" "  ✓ Permissions are secure"
+        else
+            print_message "$YELLOW" "  ⚠ Recommended permissions: 600 or 400"
+        fi
+    else
+        print_message "$RED" "✗ Configuration file not found: $CONFIG_FILE"
+        print_message "$YELLOW" "  Run: cp $BASE_DIR/config/gdols.conf.example $CONFIG_FILE"
+    fi
+}
+
+# Function to check directories
+check_directories() {
+    print_header "DIRECTORY STRUCTURE"
+
+    local dirs=(
+        "$BASE_DIR:/opt/gdols-panel"
+        "/var/lib/gdols:/var/lib/gdols"
+        "/var/log/gdols:/var/log/gdols"
+        "/etc/gdols:/etc/gdols"
+    )
+
+    for dir_pair in "${dirs[@]}"; do
+        IFS=':' read -r actual expected <<< "$dir_pair"
+        if [ -d "$actual" ]; then
+            print_message "$GREEN" "✓ $expected"
+            if [ -d "$actual/runtime" ]; then
+                echo "  └─ runtime/"
+            fi
+        else
+            print_message "$RED" "✗ $expected (missing)"
+        fi
+    done
+}
+
+# Function to check dependencies
+check_dependencies() {
+    print_header "DEPENDENCIES"
+
+    # PHP
+    if command -v php &> /dev/null; then
+        PHP_VERSION=$(php -v | head -n 1)
+        print_message "$GREEN" "✓ PHP"
+        echo "  $PHP_VERSION"
+    else
+        print_message "$RED" "✗ PHP (not installed)"
+    fi
+
+    # MariaDB/MySQL
+    if command -v mysql &> /dev/null || command -v mariadb &> /dev/null; then
+        print_message "$GREEN" "✓ MariaDB/MySQL client"
+        if systemctl is-active mysql.service &> /dev/null || systemctl is-active mariadb.service &> /dev/null; then
+            echo "  ✓ Service running"
+        else
+            echo "  ⚠ Service not running"
+        fi
+    else
+        print_message "$YELLOW" "⚠ MariaDB/MySQL client (not found)"
+    fi
+
+    # Redis
+    if command -v redis-cli &> /dev/null; then
+        print_message "$GREEN" "✓ Redis"
+        if systemctl is-active redis-server.service &> /dev/null || systemctl is-active redis.service &> /dev/null; then
+            echo "  ✓ Service running"
+        else
+            echo "  ⚠ Service not running"
+        fi
+    else
+        print_message "$YELLOW" "⚠ Redis (not found)"
+    fi
+
+    # OpenLiteSpeed
+    if command -v lshttpd &> /dev/null || [ -d "/usr/local/lsws" ]; then
+        print_message "$GREEN" "✓ OpenLiteSpeed"
+        if systemctl is-active lsws.service &> /dev/null; then
+            echo "  ✓ Service running"
+        else
+            echo "  ⚠ Service not running"
+        fi
+    else
+        print_message "$YELLOW" "⚠ OpenLiteSpeed (not found)"
+    fi
+}
+
+# Function to check recent logs
+check_logs() {
+    print_header "RECENT LOGS (Last 10 lines)"
+
+    if [ -f "$LOG_FILE" ]; then
+        print_message "$BLUE" "Reading from: $LOG_FILE"
+        echo ""
+        tail -n 10 "$LOG_FILE" 2>/dev/null || echo "  Unable to read log file"
+    else
+        print_message "$YELLOW" "⚠ Log file not found: $LOG_FILE"
+    fi
+}
+
+# Function to check web server configuration
+check_webserver() {
+    print_header "WEB SERVER CONFIGURATION"
+
+    # Check for OpenLiteSpeed vhost
+    if [ -d "/usr/local/lsws/vhosts/gdols-panel" ]; then
+        print_message "$GREEN" "✓ OpenLiteSpeed virtual host found"
+        VHOST_CONF="/usr/local/lsws/vhosts/gdols-panel/vhconf.conf"
+        if [ -f "$VHOST_CONF" ]; then
+            echo "  Config: $VHOST_CONF"
+
+            # Check if symlink exists
+            if [ -L "/usr/local/lsws/vhosts/gdols-panel/html" ]; then
+                SYmlink_TARGET=$(readlink -f "/usr/local/lsws/vhosts/gdols-panel/html")
+                echo "  Symlink: -> $SYmlink_TARGET"
+                if [ "$SYmlink_TARGET" = "$BASE_DIR/public" ]; then
+                    print_message "$GREEN" "  ✓ Symlink correctly points to public/"
+                fi
+            fi
+        fi
+    else
+        print_message "$YELLOW" "⚠ OpenLiteSpeed virtual host not configured"
+        echo "  Run setup script to configure web server"
+    fi
+}
+
+# Function to display quick info
+quick_info() {
+    echo ""
+    echo -e "${CYAN}═══════════════════════════════════════════════════════════════${NC}"
+    echo -e "${CYAN}  $APP_NAME v$APP_VERSION${NC}"
+    echo -e "${CYAN}═══════════════════════════════════════════════════════════════${NC}"
+    echo ""
+
+    # Quick status
+    if is_running; then
+        echo -e "  Status: ${GREEN}● Running${NC} (PID: $(cat $PID_FILE))"
+    else
+        echo -e "  Status: ${RED}● Stopped${NC}"
+    fi
+
+    echo "  Base Dir: $BASE_DIR"
+    echo "  Config: $CONFIG_FILE"
+    echo "  Logs: $LOG_FILE"
+    echo ""
+
+    # Quick commands
+    echo -e "${BLUE}Quick Commands:${NC}"
+    echo "  sudo systemctl start gdols-panel     - Start service"
+    echo "  sudo systemctl stop gdols-panel      - Stop service"
+    echo "  sudo systemctl restart gdols-panel   - Restart service"
+    echo "  $BASE_DIR/bin/status                 - Show this status"
+    echo "  tail -f $LOG_FILE                    - Follow logs"
+    echo ""
+}
+
+# Main execution
+main() {
+    # Check if verbose mode
+    if [ "$1" = "--verbose" ] || [ "$1" = "-v" ]; then
+        quick_info
+        get_service_status
+        check_systemd
+        check_configuration
+        check_directories
+        check_dependencies
+        check_webserver
+        check_logs
+    else
+        quick_info
+    fi
+}
+
+# Run main function
+main "$@"
