@@ -131,13 +131,16 @@ check_existing_installation() {
 install_dependencies() {
     print_step "Installing Dependencies"
 
+    # Set non-interactive mode for ALL installations
+    export DEBIAN_FRONTEND=noninteractive
+
     # Update package list
     print_info "Updating package list..."
     apt-get update -qq
 
     # Install required packages
     print_info "Installing required packages..."
-    apt-get install -y \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y \
         curl \
         wget \
         git \
@@ -147,8 +150,7 @@ install_dependencies() {
         ca-certificates \
         gnupg \
         lsb-release \
-        bc \
-        > /dev/null 2>&1
+        bc
 
     print_success "Base dependencies installed"
 }
@@ -187,13 +189,12 @@ install_php() {
     fi
 
     print_info "Adding PHP repository..."
+    export DEBIAN_FRONTEND=noninteractive
     add-apt-repository ppa:ondrej/php -y
-
-    print_info "Updating package list..."
     apt-get update -qq
 
     print_info "Installing PHP 8.3 and extensions..."
-    if ! apt-get install -y \
+    apt-get install -y \
         php8.3 \
         php8.3-fpm \
         php8.3-mysql \
@@ -211,7 +212,7 @@ install_php() {
         print_info "Trying alternative installation method..."
 
         # Try installing without specific version
-        if ! apt-get install -y php php-mysql php-redis php-curl php-gd php-mbstring php-xml php-zip php-bcmath php-intel; then
+        if ! apt-get install -y php php-mysql php-redis php-curl php-gd php-mbstring php-xml php-zip php-bcmath php-intl; then
             print_error "PHP installation failed completely"
             print_info "Please install PHP manually:"
             print_info "  sudo apt update"
@@ -235,7 +236,7 @@ install_mariadb() {
     fi
 
     print_info "Installing MariaDB..."
-    if ! apt-get install -y mariadb-server mariadb-client; then
+    if ! DEBIAN_FRONTEND=noninteractive apt-get install -y mariadb-server mariadb-client; then
         print_error "Failed to install MariaDB"
         print_info "Please install manually:"
         print_info "  sudo apt install mariadb-server mariadb-client"
@@ -264,7 +265,7 @@ install_redis() {
     fi
 
     print_info "Installing Redis..."
-    if ! apt-get install -y redis-server; then
+    if ! DEBIAN_FRONTEND=noninteractive apt-get install -y redis-server; then
         print_error "Failed to install Redis"
         print_info "Please install manually:"
         print_info "  sudo apt install redis-server"
