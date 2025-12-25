@@ -594,6 +594,7 @@ For additional help:
 
 GDOLS Panel is free and open-source software. If you find this project helpful, please consider supporting its continued development:
 
+**☕ Saweria** (Indonesia): [https://saweria.co/godi](https://saweria.co/godi)
 **☕ Buy Me a Coffee**: [https://ko-fi.com/godimyid/goal?g=0](https://ko-fi.com/godimyid/goal?g=0)
 
 ### Other Ways to Support

@@ -17,7 +17,9 @@ GDOLS Panel is free and open-source software developed and maintained by [GoDiMy
 
 ## ☕ Buy Me a Coffee
 
-The easiest way to support this project is through [Ko-Fi](https://ko-fi.com/godimyid/goal?g=0).
+The easiest way to support this project is through **Saweria** (for Indonesia) or **Ko-Fi** (international).
+
+**[☕ Support via Saweria (Indonesia)](https://saweria.co/godi)**
 
 **[☕ Buy Me a Coffee on Ko-Fi](https://ko-fi.com/godimyid/goal?g=0)**
 
@@ -140,6 +142,7 @@ Visit our [Ko-Fi page](https://ko-fi.com/godimyid/goal?g=0) to show your support
 Follow our development and stay updated:
 
 - **GitHub**: [https://github.com/godimyid/gdols-panel](https://github.com/godimyid/gdols-panel)
+- **Saweria**: [https://saweria.co/godi](https://saweria.co/godi)
 - **Ko-Fi**: [https://ko-fi.com/godimyid/goal?g=0](https://ko-fi.com/godimyid/goal?g=0)
 - **Website**: [https://godi.my.id](https://godi.my.id)
 

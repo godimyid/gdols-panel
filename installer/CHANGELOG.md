@@ -51,6 +51,37 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Web Server Configuration**: OpenLiteSpeed virtual host now uses symlink to `/opt/gdols-panel/public`
 - **Application Paths**: All internal paths updated to use FHS-compliant structure
 
+### Fixed
+- **Static Files 404 Errors**: Fixed OpenLiteSpeed static file serving issues
+  - Added automatic web server detection (OpenLiteSpeed/Apache/Nginx)
+  - Set correct file ownership based on detected web server:
+    - OpenLiteSpeed: `nobody:nogroup`
+    - Apache/Nginx: `www-data:www-data`
+  - Fixed symlink configuration for virtual host
+  - Added context rules for `/assets/`, `/css/`, `/js/`, `/img/` directories
+- **Permission Issues**: 
+  - Implemented dynamic permission setup based on web server
+  - Fixed storage directory permissions (750)
+  - Ensured executable permissions for scripts
+- **Virtual Host Configuration**: Enhanced OpenLiteSpeed vhost configuration
+  - Added static file serving contexts
+  - Implemented proper symlink management
+  - Added caching headers for static assets
+- **Installer Improvements**:
+  - Added `fix_static_files()` function for troubleshooting
+  - Enhanced permission fixing in setup process
+  - Improved error handling and user feedback
+  - Added comprehensive static file verification
+
+### Added
+- **Static File Troubleshooting**: New function to automatically diagnose and fix static file serving issues
+- **Web Server Auto-Detection**: Installer now detects running web server and applies appropriate configurations
+- **Enhanced OpenLiteSpeed Support**: Improved vhost configuration with proper static file contexts
+- **Web Server Configuration**: OpenLiteSpeed virtual host now uses symlink to `/opt/gdols-panel/public`
+- **Application Paths**: All internal paths updated to use FHS-compliant structure
+- **Saweria Integration**: Added Saweria (https://saweria.co/godi) as primary donation option for Indonesia supporters
+- **Multi-Platform Support**: Support buttons now include both Saweria (Indonesia) and Ko-Fi (International) in panel UI
+
 ### Removed
 - Old installation directory structure support
 - Legacy configuration files format

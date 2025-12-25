@@ -978,6 +978,37 @@ If upgrading from v1.0.0, see [FHS_MIGRATION.md](FHS_MIGRATION.md)
    - New: `/opt/gdols-panel/`
    - Update all scripts and references
 
+2. **Static Files (404 Errors):**
+   - **Symptom**: CSS and JS files return 404 errors despite files existing
+   - **Root Cause**: Incorrect file ownership for OpenLiteSpeed
+   - **Quick Fix**:
+   ```bash
+   # Fix OpenLiteSpeed permissions
+   sudo chown -R nobody:nogroup /opt/gdols-panel/public
+   sudo chown -R nobody:nogroup /usr/local/lsws/vhosts/gdols-panel
+   sudo chmod -R 755 /opt/gdols-panel/public
+   
+   # Fix symlink
+   sudo rm -f /usr/local/lsws/vhosts/gdols-panel/html
+   sudo ln -sf /opt/gdols-panel/public /usr/local/lsws/vhosts/gdols-panel/html
+   
+   # Restart OpenLiteSpeed
+   sudo systemctl restart lsws
+   ```
+   
+   - **Verify Fix**:
+   ```bash
+   # Check files exist
+   ls -lh /opt/gdols-panel/public/assets/css/style.css
+   ls -lh /opt/gdols-panel/public/assets/js/app.js
+   
+   # Check ownership
+   ls -la /opt/gdols-panel/public/assets/
+   
+   # Test access
+   curl -I http://YOUR_IP:8088/assets/css/style.css
+   ```
+
 2. **Config Location:**
    - Old: `/home/ubuntu/gdols-panel/config/`
    - New: `/etc/gdols/gdols.conf`

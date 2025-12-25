@@ -14,7 +14,8 @@
 
 [⭐ Star us on GitHub](https://github.com/godimyid/gdols-panel) • 
 [🐛 Report Issues](https://github.com/godimyid/gdols-panel/issues) • 
-[💬 Discussions](https://github.com/godimyid/gdols-panel/discussions)
+[💬 Discussions](https://github.com/godimyid/gdols-panel/discussions) • 
+[☕ Buy me a coffee](https://saweria.co/godi)
 
 </div>
 
@@ -118,6 +119,59 @@ sudo bash install.sh
 
 See [INSTALL.md](installer/INSTALL.md) for detailed installation guide.
 
+### Post-Installation
+
+After installation, test your panel:
+
+```bash
+# Check service status
+sudo systemctl status gdols-panel
+
+# Access web interface
+http://YOUR_SERVER_IP:8088
+```
+
+---
+
+## 🔧 Troubleshooting
+
+### Common Issues
+
+**Issue: Static Files (CSS/JS) Return 404**
+
+If your panel loads but styles and scripts don't work:
+
+```bash
+# Quick fix
+sudo /opt/gdols-panel/bin/fix-static-files
+
+# Or detailed troubleshooting
+sudo /opt/gdols-panel/scripts/fix-static-files.sh
+```
+
+**Issue: Service Won't Start**
+
+```bash
+# Check logs
+sudo journalctl -u gdols-panel -n 50
+
+# Check status
+sudo /opt/gdols-panel/bin/status --verbose
+```
+
+**Issue: Permission Errors**
+
+```bash
+# Fix permissions
+sudo chown -R nobody:nogroup /opt/gdols-panel/public  # OpenLiteSpeed
+sudo chown -R www-data:www-data /opt/gdols-panel/public  # Apache/Nginx
+```
+
+For detailed troubleshooting, see [TROUBLESHOOTING.md](installer/TROUBLESHOOTING.md).
+
+---
+
+
 ---
 
 ## 📁 FHS-Compliant Structure
@@ -186,7 +240,9 @@ sudo /opt/gdols-panel/bin/status --verbose
 
 - **[Installation Guide](installer/INSTALL.md)** - Complete installation instructions
 - **[FHS Migration Guide](installer/FHS_MIGRATION.md)** - Migrate from old structure
+- **[Troubleshooting Guide](installer/TROUBLESHOOTING.md)** - Fix common issues
 - **[Installation Flow](installer/INSTALLATION_FLOW.md)** - Visual installation process
+- **[Quick Install Guide](installer/QUICK_INSTALL.md)** - Fast installation reference
 - **[Changelog](installer/CHANGELOG.md)** - Version history and changes
 - **[Roadmap](installer/ROADMAP.md)** - Development roadmap
 - **[Support](installer/SUPPORT.md)** - Support and contribution guide
@@ -251,6 +307,7 @@ GDOLS Panel is free and open-source. Your support helps keep this project alive!
 
 ### ☕ Buy Me a Coffee
 
+[![Saweria](https://img.shields.io/badge/Saweria-Support%20Me-FFB400?style=for-the-badge&logo=buymeacoffee)](https://saweria.co/godi)
 [![Ko-Fi](https://img.shields.io/badge/Ko--Fi-Buy%20Me%20a%20Coffee-ff5f5f?style=for-the-badge&logo=ko-fi)](https://ko-fi.com/godimyid/goal?g=0)
 
 ### Other Ways to Support

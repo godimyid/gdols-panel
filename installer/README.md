@@ -452,6 +452,7 @@ cat /opt/gdols-panel/VERSION
 
 GDOLS Panel is free and open-source. If you find this project helpful, consider supporting its development:
 
+- **☕ Saweria**: [https://saweria.co/godi](https://saweria.co/godi) - Support locally (Indonesia)
 - **☕ Buy Me a Coffee**: [https://ko-fi.com/godimyid/goal?g=0](https://ko-fi.com/godimyid/goal?g=0)
 - **⭐ Star on GitHub**: [https://github.com/godimyid/gdols-panel](https://github.com/godimyid/gdols-panel)
 - **🐛 Report Issues**: Help us improve by reporting bugs

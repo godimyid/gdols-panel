@@ -165,7 +165,9 @@ If you encounter issues:
 1. Check [TROUBLESHOOTING.md](TROUBLESHOOTING.md)
 2. Search [GitHub Issues](https://github.com/godimyid/gdols-panel/issues)
 3. Ask in [GitHub Discussions](https://github.com/godimyid/gdols-panel/discussions)
-4. Visit [Support Page](https://ko-fi.com/godimyid/goal?g=0)
+4. Support the project:
+   - [Saweria (Indonesia)](https://saweria.co/godi)
+   - [Ko-Fi (International)](https://ko-fi.com/godimyid/goal?g=0)
 
 ---
 

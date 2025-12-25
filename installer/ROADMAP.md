@@ -42,6 +42,7 @@ GDOLS Panel aims to be the most comprehensive and user-friendly management panel
 - ✅ Service management scripts (start, stop, restart, status)
 - ✅ Enhanced documentation (INSTALL, FHS_MIGRATION, SUPPORT)
 - ✅ Ko-Fi support integration
+- ✅ Saweria support integration (Indonesia)
 - ✅ Support page in panel UI
 - ✅ Security hardening with proper file permissions
 - ✅ Log rotation configuration
